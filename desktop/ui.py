@@ -10,10 +10,12 @@ class AppUI_tkinter(ttk.Frame):
     def __init__(self, master = None):
         ttk.Frame.__init__(self, master)
         self.__top_level_window = self.winfo_toplevel()
-        
+
         self.master.title(config.app_name)
         self.__setup_window()
         self.__create_widgets()
+
+        self.__top_level_window.protocol("WM_DELETE_WINDOW", self.__exit)
 
     def __setup_window(self):
         self.__top_level_window.minsize(width = 300, height = 150)
@@ -32,10 +34,13 @@ class AppUI_tkinter(ttk.Frame):
         self.rowconfigure(0, weight = 1)
         self.rowconfigure(1, weight = 1)
         self.columnconfigure(0, weight = 1)
-        
+
     def __click_timer_button(self):
         if self.__timer_button_listener != None:
             self.__timer_button_listener()
+
+    def __exit(self):
+        self.__top_level_window.destroy()
 
     def start(self):
         self.mainloop()
