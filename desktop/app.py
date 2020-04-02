@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3
 # app.py - What ties it all together.
 
 from ui import AppUI_tkinter
