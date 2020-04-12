@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # app.py - What ties it all together.
 
-from ui import AppUI_tkinter
+from ui import AppUI
 from logic import AppLogic
 
-ui = AppUI_tkinter()
+ui = AppUI()
 logic = AppLogic(ui)
 
 ui.start()

@@ -6,7 +6,7 @@ from tkinter import ttk
 
 import config
 
-class AppUI_tkinter(ttk.Frame):
+class AppUI(ttk.Frame):
     def __init__(self, master = None):
         ttk.Frame.__init__(self, master)
         self.__top_level_window = self.winfo_toplevel()
