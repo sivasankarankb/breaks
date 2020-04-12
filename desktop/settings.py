@@ -1,5 +1,5 @@
 
 # settings.py - User settings
 
-# Duration of one continuous work session in minutes
-work_period=24
+# Duration of one continuous work session in seconds
+work_period = 24 * 60

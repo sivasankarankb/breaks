@@ -3,7 +3,7 @@
 
 import plyer
 
-from timers import CountdownTimer
+import timers
 import config
 import settings
 
@@ -22,11 +22,14 @@ class AppLogic:
 
     def __timer_button_listener(self):
         self.__timer_button_state = not self.__timer_button_state
-        
+
         if self.__timer_button_state:
             self.__ui.set_timer_button_text('Take a break.')
-            
-            self.__countdown_timer = CountdownTimer(settings.work_period, self.__timer_done)
+
+            self.__countdown_timer = timers.Countdown(
+                settings.work_period, self.__timer_done
+            )
+
             self.__countdown_timer.set_progress_callback(self.__timer_update)
             self.__countdown_timer.start()
 
@@ -43,5 +46,6 @@ class AppLogic:
         self.__ui.set_time_text('Done')
         Notifier.notify('Take a break.')
 
-    def __timer_update(self, minutes):
+    def __timer_update(self, seconds):
+        minutes = seconds // 60
         self.__ui.set_time_text( str(minutes) + ' minute(s) left')
