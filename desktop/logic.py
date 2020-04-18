@@ -66,3 +66,5 @@ class AppLogic:
     def __timer_update(self, seconds):
         minutes = seconds // 60
         self.__ui.set_time_text( str(minutes) + ' minute(s) left')
+
+    def cleanup(self): self.__work_data.end()

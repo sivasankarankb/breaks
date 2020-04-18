@@ -9,3 +9,4 @@ ui = AppUI()
 logic = AppLogic(ui)
 
 ui.start()
+logic.cleanup()

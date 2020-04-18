@@ -113,7 +113,7 @@ class Lap:
     def started(self): return self.__lapmoment != None
 
     def start(self):
-        if not self.started: self.__lapmoment = time.monotonic()
+        if not self.started(): self.__lapmoment = time.monotonic()
 
     def lap(self, peek=False):
         if not self.started(): return 0

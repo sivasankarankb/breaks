@@ -2,6 +2,7 @@
 # persistance.py - Saves and loads application data
 
 import timers
+import shelve
 
 class WorkData:
     def __init__(self):
@@ -27,8 +28,33 @@ class WorkData:
         self.__end_timestamp = timers.timestamp()
         self.__ended = True
 
-    def save(self): pass
+        try: storage = shelve.open('workdata.shelf')
+        except: storage = None
 
-    def load(self, start_time, stop_time): pass
+        if storage != None:
+            data = (
+                self.__begin_timestamp, self.__events, self.__end_timestamp
+            )
 
-    def load_single(self, start_time): pass
+            if 'workday' in storage: storage['workday'].append(data)
+            else: storage['workday'] = [data]
+
+            storage.close()
+
+        else: pass #TODO: Handle this elegantly (maybe).
+
+    def load(self, index=None):
+        try: storage = shelve.open('workdata.shelf', 'r')
+        except: storage = None
+
+        if storage != None and 'workday' in storage:
+
+            if index != None and len(storage['workday']) > index:
+                data = storage['workday'][index]
+
+            elif index == None: data = storage['workday'][:]
+
+            else: data = None
+
+            storage.close()
+            return data
