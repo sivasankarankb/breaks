@@ -110,10 +110,11 @@ class Lap:
 
     def start(self): self.__lapmoment = time.monotonic()
 
-    def lap(self):
+    def lap(self, peek=False):
         last = self.__lapmoment
-
         if last == None: return 0
 
-        self.__lapmoment = time.monotonic()
-        return self.__lapmoment - last
+        now = time.monotonic()
+        if not peek: self.__lapmoment = now
+        
+        return now - last
