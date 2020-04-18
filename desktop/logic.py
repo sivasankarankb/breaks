@@ -6,6 +6,7 @@ import plyer
 import timers
 import config
 import settings
+import persistance
 
 class Notifier:
     def notify(message):
@@ -14,16 +15,16 @@ class Notifier:
 class AppLogic:
     def __init__(self, ui):
         self.__ui = ui
-        self.__ui.set_time_text('Ready')
-        self.__ui.set_timer_button_text('Let\'s work!')
+        self.__ui.set_time_text('Ready?')
+        self.__ui.set_timer_button_text('Let\'s begin!')
         self.__ui.set_timer_button_listener(self.__timer_button_listener)
 
-        self.__timer_button_state = False
+        self.__timer_button_state = 'init'
+        self.__work_data = persistance.WorkData()
 
     def __timer_button_listener(self):
-        self.__timer_button_state = not self.__timer_button_state
-
-        if self.__timer_button_state:
+        if self.__timer_button_state == 'init':
+            self.__work_data.begin()
             self.__ui.set_timer_button_text('Take a break.')
 
             self.__countdown_timer = timers.Countdown(
@@ -32,8 +33,22 @@ class AppLogic:
 
             self.__countdown_timer.set_progress_callback(self.__timer_update)
             self.__countdown_timer.start()
+            self.__timer_button_state = 'break'
 
-        else:
+        elif self.__timer_button_state == 'begin':
+            self.__work_data.record_event('start-work')
+            self.__ui.set_timer_button_text('Take a break.')
+
+            self.__countdown_timer = timers.Countdown(
+                settings.work_period, self.__timer_done
+            )
+
+            self.__countdown_timer.set_progress_callback(self.__timer_update)
+            self.__countdown_timer.start()
+            self.__timer_button_state = 'break'
+
+        elif self.__timer_button_state == 'break':
+            self.__work_data.record_event('take-break')
             self.__ui.set_timer_button_text('Let\'s work!')
 
             if not self.__countdown_timer.completed():
@@ -41,8 +56,10 @@ class AppLogic:
                 self.__ui.set_time_text('Done')
 
             self.__countdown_timer = None
+            self.__timer_button_state = 'begin'
 
     def __timer_done(self):
+        self.__work_data.record_event('time-up')
         self.__ui.set_time_text('Done')
         Notifier.notify('Take a break.')
 

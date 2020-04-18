@@ -5,6 +5,8 @@ import threading
 import time
 import math
 
+def timestamp(): return time.strftime("%j%Y%H%M%S%z", time.localtime())
+
 class Indeterminate:
     def __init__(self, progress, granularity=60.0):
         self.__progress_callback = progress
@@ -108,13 +110,17 @@ class Countdown:
 class Lap:
     def __init__(self): self.__lapmoment = None
 
-    def start(self): self.__lapmoment = time.monotonic()
+    def started(self): return self.__lapmoment != None
+
+    def start(self):
+        if not self.started: self.__lapmoment = time.monotonic()
 
     def lap(self, peek=False):
-        last = self.__lapmoment
-        if last == None: return 0
+        if not self.started(): return 0
 
+        last = self.__lapmoment
         now = time.monotonic()
+
         if not peek: self.__lapmoment = now
-        
+
         return now - last
