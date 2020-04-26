@@ -2,11 +2,12 @@
 
 # app.py - What ties it all together.
 
-from ui import AppUI
-from logic import AppLogic
+import ui
+import logic
 
-ui = AppUI()
-logic = AppLogic(ui)
+app_ui = ui.App()
+work_timer_ui = ui.WorkTimer(master=app_ui.get_top_level_window())
+work_timer_logic = logic.WorkTimer(work_timer_ui)
 
-ui.start()
-logic.cleanup()
+app_ui.start()
+work_timer_logic.cleanup()

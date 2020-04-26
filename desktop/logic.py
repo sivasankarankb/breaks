@@ -12,7 +12,7 @@ class Notifier:
     def notify(message):
         plyer.notification.notify(title=config.app_name, message=message)
 
-class AppLogic:
+class WorkTimer:
     def __init__(self, ui):
         self.__ui = ui
         self.__ui.set_time_text('Ready?')
