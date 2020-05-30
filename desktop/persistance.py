@@ -22,7 +22,7 @@ class WorkData:
         self.__events.append((label, data, self.__lap_timer.lap()))
 
     def end(self):
-        if self.__ended: return
+        if self.__ended or not self.__begun: return
 
         self.record_event('end')
         self.__end_timestamp = timers.timestamp()
