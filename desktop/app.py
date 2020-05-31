@@ -16,7 +16,7 @@ if __name__ == '__main__':
     data = work_data.load()
 
     if data != None:
-        data = data[0][1]
+        data = data[-1][1]
         colors = ['#ffcc00', '#0033cc']
         icolor = 0
         for event in data:
