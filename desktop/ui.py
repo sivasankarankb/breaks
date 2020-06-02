@@ -31,29 +31,31 @@ class App:
 
     def __exit(self): self.__tk.destroy()
 
-class WorkTimer:
+class GridPlaceable:
     def __init__(self, master = None, row=None, column=None):
         params = {}
         if row != None: params['row'] = row
         if column != None: params['column'] = column
 
-        self.__frame = ttk.Frame(master)
-        self.__frame.grid(sticky = tk.N + tk.S + tk.E + tk.W, **params)
-        self.__create_widgets()
+        frame = ttk.Frame(master)
+        frame.grid(sticky=tk.NSEW, **params)
 
-    def __create_widgets(self):
-        self.__timer_time = ttk.Label(self.__frame)
+        self.create_widgets(frame)
+
+class WorkTimer(GridPlaceable):
+    def create_widgets(self, frame):
+        self.__timer_time = ttk.Label(frame)
         self.__timer_time.grid()
 
         self.__timer_button = ttk.Button(
-            self.__frame, command=self.__click_timer_button
+            frame, command=self.__click_timer_button
         )
         self.__timer_button.grid()
         self.__timer_button_listener = None
 
-        self.__frame.rowconfigure(0, weight = 1)
-        self.__frame.rowconfigure(1, weight = 1)
-        self.__frame.columnconfigure(0, weight = 1)
+        frame.rowconfigure(0, weight = 1)
+        frame.rowconfigure(1, weight = 1)
+        frame.columnconfigure(0, weight = 1)
 
     def __click_timer_button(self):
         if self.__timer_button_listener != None: self.__timer_button_listener()
@@ -66,22 +68,13 @@ class WorkTimer:
     def set_timer_button_listener(self, listener = None):
         self.__timer_button_listener = listener
 
-class TimeGraph():
-    def __init__(self, master=None, row=None, column=None):
-        params = {}
-        if row != None: params['row'] = row
-        if column != None: params['column'] = column
+class TimeGraph(GridPlaceable):
+    def create_widgets(self, frame):
+        frame.grid_configure(sticky=tk.EW)
+        frame.columnconfigure(0, weight=1)
 
-        self.__frame = ttk.Frame(master)
-        self.__frame.grid(sticky=tk.E + tk.W, **params)
-
-        self.__create_widgets()
-
-    def __create_widgets(self):
-        self.__frame.columnconfigure(0, weight=1)
-
-        self.__canvas = tk.Canvas(self.__frame, height=32)
-        self.__canvas.grid(sticky=tk.E + tk.W)
+        self.__canvas = tk.Canvas(frame, height=32)
+        self.__canvas.grid(sticky=tk.EW)
 
         self.__graph_data = []
         self.draw_graph()
