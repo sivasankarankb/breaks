@@ -77,9 +77,18 @@ class TimeGraph(GridPlaceable):
         self.__canvas.grid(sticky=tk.EW)
 
         self.__graph_data = []
-        self.draw_graph()
+        self.draw()
 
-    def set_graph_data(self, data, normalise=True):
+        frame.bind('<Configure>', self.__canvas_reconfigure, add=True)
+
+    def __canvas_reconfigure(self, event):
+        params = str(event).split()[2:]
+
+        for param in params:
+            key, value = param.split('=')
+            if key == 'width': self.draw(value)
+
+    def set_data(self, data, normalise=True):
         total = 0
         for item in data: total += item[0]
 
@@ -91,7 +100,9 @@ class TimeGraph(GridPlaceable):
 
         self.__graph_data = normalised
 
-    def draw_graph(self):
+    def set_height(self, height): self.__canvas['height'] = height
+
+    def draw(self, width=None):
         try:
             for item in self.__graph_ids: self.__canvas.delete(item)
         except: pass
@@ -100,12 +111,20 @@ class TimeGraph(GridPlaceable):
 
         x1, y1 = 3, 3
         y2 = int(self.__canvas['height']) - 3
-        width = int(self.__canvas['width']) - 5
+        if width != None: width = int(width) - 5
+        else: width = int(self.__canvas['width']) - 5
 
         for point in self.__graph_data:
             x2 = x1 + (width * point[0])
             fill = point[1]
-            item = self.__canvas.create_rectangle(x1, y1, x2, y2, fill=fill)
+
+            item = self.__canvas.create_rectangle(
+                x1, y1, x2, y2, fill=fill, outline=''
+            )
 
             self.__graph_ids.append(item)
             x1 = x2
+
+class WorkTimeViewer(GridPlaceable):
+    def create_widgets(self, frame):
+        pass

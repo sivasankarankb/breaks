@@ -8,8 +8,12 @@ import persistance
 
 if __name__ == '__main__':
     app_ui = ui.App()
-    work_timer_ui = ui.WorkTimer(master=app_ui.get_top_level_window())
+    toplevel = app_ui.get_top_level_window()
+
+    work_timer_ui = ui.WorkTimer(master=toplevel)
     work_timer_logic = logic.WorkTimer(work_timer_ui)
+
+    work_time_viewer = ui.WorkTimeViewer(master=toplevel)
 
     graph_data = []
     work_data = persistance.WorkData()
@@ -25,9 +29,9 @@ if __name__ == '__main__':
 
     time_graph = ui.TimeGraph(master=app_ui.get_top_level_window())
 
-    time_graph.set_graph_data(graph_data)
-
-    time_graph.draw_graph()
+    time_graph.set_data(graph_data)
+    time_graph.set_height(16)
+    time_graph.draw()
 
     app_ui.start()
     work_timer_logic.cleanup()
