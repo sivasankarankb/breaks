@@ -10,6 +10,8 @@ if __name__ == '__main__':
     app_ui = ui.App()
     master = app_ui.get_nesting_window()
 
+    doing_now = ui.DoingNow(master=master)
+
     work_timer_ui = ui.WorkTimer(master=master)
     work_timer_logic = logic.WorkTimer(work_timer_ui)
 

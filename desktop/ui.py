@@ -185,3 +185,13 @@ class WorkTimeViewer(GridPlaceable):
 
         self.__day_graph.set_data(timings)
         self.__day_graph.draw()
+
+class DoingNow(GridPlaceable):
+    def initialise(self, frame): self.__create_widgets(frame)
+
+    def __create_widgets(self, frame):
+        self.__doing_now_label = ttk.Label(frame, text="Doing now:")
+        self.__doing_now_label.grid(sticky=tk.W, pady=(0,8))
+
+        self.__current_task = tk.Text(frame, width=40, height=6)
+        self.__current_task.grid(sticky=tk.NSEW, pady=(0,8))
