@@ -5,10 +5,11 @@ import tkinter as tk
 from tkinter import ttk
 
 import config
+import persistance
 
 class App:
     def __setup_window(self):
-        self.__tk.minsize(width = 300, height = 150)
+        self.__tk.minsize(width = 300, height = 0)
         self.__tk.rowconfigure(0, weight = 1)
         self.__tk.columnconfigure(0, weight = 1)
 
@@ -17,11 +18,14 @@ class App:
         self.__tk.title(config.app_name)
         self.__tk.protocol("WM_DELETE_WINDOW", self.__exit)
 
+        self.__outer_frame = ttk.Frame(self.__tk)
+        self.__outer_frame.grid(sticky=tk.NSEW, padx=8, pady=8)
+
         self.__setup_window()
 
     def start(self): self.__tk.mainloop()
 
-    def get_top_level_window(self): return self.__tk
+    def get_nesting_window(self): return self.__outer_frame
 
     def minimise_main_window(self): self.__tk.iconify()
 
@@ -32,7 +36,7 @@ class App:
     def __exit(self): self.__tk.destroy()
 
 class GridPlaceable:
-    def __init__(self, master = None, row=None, column=None):
+    def __init__(self, master = None, row=None, column=None, expand=False):
         params = {}
         if row != None: params['row'] = row
         if column != None: params['column'] = column
@@ -40,12 +44,23 @@ class GridPlaceable:
         frame = ttk.Frame(master)
         frame.grid(sticky=tk.NSEW, **params)
 
-        self.create_widgets(frame)
+        if master != None and expand:
+            info = frame.grid_info()
+            row = int(info['row'])
+            col = int(info['column'])
+            master.rowconfigure(row, weight=1)
+            master.columnconfigure(col, weight=1)
+
+        self.initialise(frame)
+
+    def initialise(self, frame): pass
 
 class WorkTimer(GridPlaceable):
-    def create_widgets(self, frame):
+    def initialise(self, frame): self.__create_widgets(frame)
+
+    def __create_widgets(self, frame):
         self.__timer_time = ttk.Label(frame)
-        self.__timer_time.grid()
+        self.__timer_time.grid(pady=(0,8))
 
         self.__timer_button = ttk.Button(
             frame, command=self.__click_timer_button
@@ -53,8 +68,7 @@ class WorkTimer(GridPlaceable):
         self.__timer_button.grid()
         self.__timer_button_listener = None
 
-        frame.rowconfigure(0, weight = 1)
-        frame.rowconfigure(1, weight = 1)
+        frame.grid_configure(pady=(0,8))
         frame.columnconfigure(0, weight = 1)
 
     def __click_timer_button(self):
@@ -69,12 +83,15 @@ class WorkTimer(GridPlaceable):
         self.__timer_button_listener = listener
 
 class TimeGraph(GridPlaceable):
-    def create_widgets(self, frame):
-        frame.grid_configure(sticky=tk.EW)
-        frame.columnconfigure(0, weight=1)
+    def initialise(self, frame): self.__create_widgets(frame)
 
-        self.__canvas = tk.Canvas(frame, height=32)
-        self.__canvas.grid(sticky=tk.EW)
+    def __create_widgets(self, frame):
+        self.__canvas = tk.Canvas(frame, width=1, height=16)
+        self.__canvas.grid(sticky=tk.NSEW)
+
+        #frame.grid_configure(sticky=tk.EW)
+        frame.rowconfigure(0, weight=1)
+        frame.columnconfigure(0, weight=1)
 
         self.__graph_data = []
         self.draw()
@@ -82,11 +99,14 @@ class TimeGraph(GridPlaceable):
         frame.bind('<Configure>', self.__canvas_reconfigure, add=True)
 
     def __canvas_reconfigure(self, event):
-        params = str(event).split()[2:]
+        changes = str(event)[1:-1].split()[2:] #Angle Brackets sliced off
+        params = {}
 
-        for param in params:
-            key, value = param.split('=')
-            if key == 'width': self.draw(value)
+        for item in changes:
+            key, value = item.split('=')
+            if key == 'width' or key == 'height': params[key] = value
+
+        if len(params) > 0: self.draw(**params)
 
     def set_data(self, data, normalise=True):
         total = 0
@@ -100,9 +120,9 @@ class TimeGraph(GridPlaceable):
 
         self.__graph_data = normalised
 
-    def set_height(self, height): self.__canvas['height'] = height
+    def set_height(self, height=16): self.__canvas['height'] = height
 
-    def draw(self, width=None):
+    def draw(self, width=None, height=None):
         try:
             for item in self.__graph_ids: self.__canvas.delete(item)
         except: pass
@@ -110,7 +130,12 @@ class TimeGraph(GridPlaceable):
         self.__graph_ids = []
 
         x1, y1 = 3, 3
-        y2 = int(self.__canvas['height']) - 3
+
+        if height != None: height = int(height)
+        else: height = int(self.__canvas['height'])
+
+        y2 = height - 3
+
         if width != None: width = int(width) - 5
         else: width = int(self.__canvas['width']) - 5
 
@@ -126,5 +151,37 @@ class TimeGraph(GridPlaceable):
             x1 = x2
 
 class WorkTimeViewer(GridPlaceable):
-    def create_widgets(self, frame):
-        pass
+    def initialise(self, frame):
+        self.__parse_data()
+        self.__create_widgets(frame)
+        self.__show_day(-1)
+
+    def __parse_data(self):
+        self.__data = persistance.WorkData().load()
+
+    def __create_widgets(self, frame):
+        self.__day_graph = TimeGraph(frame)
+
+        self.__graph_date = ttk.Label(frame, text='Last day')
+        self.__graph_date.grid(pady=(8,0))
+
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(0, weight=1)
+
+    def __show_day(self, index):
+        if self.__data == None: return
+
+        timings = []
+
+        try: events = self.__data[index][1]
+        except: return
+
+        colors = ['#339900', '#003399']
+        icolor = 0
+
+        for event in events:
+            timings.append([event[2], colors[icolor]])
+            icolor = (icolor + 1) % 2
+
+        self.__day_graph.set_data(timings)
+        self.__day_graph.draw()
