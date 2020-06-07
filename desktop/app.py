@@ -14,7 +14,8 @@ if __name__ == '__main__':
 
     work_timer_ui = ui.WorkTimer(master=master, expand='horizontal')
     work_timer_logic = logic.WorkTimer(work_timer_ui)
-
+    
+    to_do_list = ui.ToDoList(master=master, expand='both')
     #work_time_viewer = ui.WorkTimeViewer(master=master, expand=True)
 
     app_ui.start()

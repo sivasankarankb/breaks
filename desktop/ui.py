@@ -19,7 +19,7 @@ class App:
         self.__tk.protocol("WM_DELETE_WINDOW", self.__exit)
 
         self.__outer_frame = ttk.Frame(self.__tk)
-        self.__outer_frame.grid(sticky=tk.NSEW, padx=8, pady=8)
+        self.__outer_frame.grid(sticky=tk.NSEW, padx=16, pady=(16,0))
 
         self.__setup_window()
 
@@ -42,7 +42,7 @@ class GridPlaceable:
         if column != None: params['column'] = column
 
         frame = ttk.Frame(master)
-        frame.grid(sticky=tk.NSEW, **params)
+        frame.grid(sticky=tk.NSEW, pady=(0,16), **params)
 
         if master != None and expand != None:
             info = frame.grid_info()
@@ -63,6 +63,14 @@ class WorkTimer(GridPlaceable):
     def initialise(self, frame): self.__create_widgets(frame)
 
     def __create_widgets(self, frame):
+        iframe = ttk.LabelFrame(frame, text='Timer', padding=8)
+        iframe.grid(sticky=tk.NSEW)
+
+        frame.rowconfigure(0, weight=1)
+        frame.columnconfigure(0, weight=1)
+
+        frame = iframe
+
         self.__timer_time = ttk.Label(frame)
         self.__timer_time.grid(row=0, column=0)
 
@@ -166,7 +174,7 @@ class WorkTimeViewer(GridPlaceable):
         self.__day_graph = TimeGraph(frame)
 
         self.__graph_date = ttk.Label(frame, text='Last day')
-        self.__graph_date.grid(pady=(8,0))
+        self.__graph_date.grid()
 
         frame.columnconfigure(0, weight=1)
         frame.rowconfigure(0, weight=1)
@@ -199,6 +207,38 @@ class DoingNow(GridPlaceable):
         self.__current_task = tk.Text(frame, width=40, height=6)
         self.__current_task.grid(sticky=tk.NSEW)
 
-        frame.grid_configure(pady=(0,8))
         frame.rowconfigure(1, weight=1)
         frame.columnconfigure(0, weight=1)
+
+class ToDoList(GridPlaceable):
+    def initialise(self, frame): self.__create_widgets(frame)
+
+    def __create_widgets(self, frame):
+        self.__todo_list_label = ttk.Label(frame, text='To do:')
+        self.__todo_list_label.grid(row=0, column=0, sticky=tk.W, pady=(0,8))
+
+        self.__todo_list = ttk.Treeview(frame, show='tree', height=12)
+        self.__todo_list.grid(
+            row=1, column=0, rowspan=3, sticky=tk.NSEW, padx=(0,8), pady=(0,8)
+        )
+
+        self.__todo_task_label = ttk.Label(frame, text='Task')
+        self.__todo_task_label.grid(row=0, column=1, pady=(0,8), sticky=tk.W)
+
+        self.__todo_task = ttk.Entry(frame)
+        self.__todo_task.grid(row=1, column=1, sticky=tk.EW, pady=(0,8))
+
+        self.__todo_desc_label = ttk.Label(frame, text='Description')
+        self.__todo_desc_label.grid(row=2, column=1, pady=(0,8), sticky=tk.W)
+
+        self.__todo_description = tk.Text(frame, width=40, height=10)
+        self.__todo_description.grid(
+            row=3, column=1, sticky=tk.NSEW, pady=(0,8)
+        )
+
+        self.__todo_add = ttk.Button(frame, text="Add")
+        self.__todo_add.grid(row=4, column=1, sticky=tk.E)
+
+        frame.rowconfigure(3, weight=1)
+        frame.columnconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=1)
