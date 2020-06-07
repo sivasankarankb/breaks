@@ -36,7 +36,7 @@ class App:
     def __exit(self): self.__tk.destroy()
 
 class GridPlaceable:
-    def __init__(self, master = None, row=None, column=None, expand=False):
+    def __init__(self, master = None, row=None, column=None, expand=None):
         params = {}
         if row != None: params['row'] = row
         if column != None: params['column'] = column
@@ -44,12 +44,16 @@ class GridPlaceable:
         frame = ttk.Frame(master)
         frame.grid(sticky=tk.NSEW, **params)
 
-        if master != None and expand:
+        if master != None and expand != None:
             info = frame.grid_info()
             row = int(info['row'])
             col = int(info['column'])
-            master.rowconfigure(row, weight=1)
-            master.columnconfigure(col, weight=1)
+
+            if expand == 'horizontal' or expand == 'both':
+                master.columnconfigure(col, weight=1)
+
+            if expand == 'vertical' or expand == 'both':
+                master.rowconfigure(row, weight=1)
 
         self.initialise(frame)
 
@@ -196,3 +200,5 @@ class DoingNow(GridPlaceable):
         self.__current_task.grid(sticky=tk.NSEW)
 
         frame.grid_configure(pady=(0,8))
+        frame.rowconfigure(1, weight=1)
+        frame.columnconfigure(0, weight=1)
