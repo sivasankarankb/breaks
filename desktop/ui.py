@@ -60,15 +60,14 @@ class WorkTimer(GridPlaceable):
 
     def __create_widgets(self, frame):
         self.__timer_time = ttk.Label(frame)
-        self.__timer_time.grid(pady=(0,8))
+        self.__timer_time.grid(row=0, column=0)
 
         self.__timer_button = ttk.Button(
             frame, command=self.__click_timer_button
         )
-        self.__timer_button.grid()
+        self.__timer_button.grid(row=0, column=1)
         self.__timer_button_listener = None
 
-        frame.grid_configure(pady=(0,8))
         frame.columnconfigure(0, weight = 1)
 
     def __click_timer_button(self):
@@ -194,4 +193,6 @@ class DoingNow(GridPlaceable):
         self.__doing_now_label.grid(sticky=tk.W, pady=(0,8))
 
         self.__current_task = tk.Text(frame, width=40, height=6)
-        self.__current_task.grid(sticky=tk.NSEW, pady=(0,8))
+        self.__current_task.grid(sticky=tk.NSEW)
+
+        frame.grid_configure(pady=(0,8))
