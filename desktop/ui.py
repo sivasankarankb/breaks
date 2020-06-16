@@ -262,8 +262,25 @@ class ToDoList(GridPlaceable):
     def initialise(self, frame): self.__create_widgets(frame)
 
     def __create_widgets(self, frame):
-        self.__todo_list_label = ttk.Label(frame, text='To do:')
-        self.__todo_list_label.grid(row=0, column=0, sticky=tk.W, pady=(0,8))
+        self.__todo_list_top_frame = ttk.Frame(frame)
+
+        self.__todo_list_top_frame.grid(
+            row=0, column=0, sticky=tk.NSEW, padx=(0,8), pady=(0,8)
+        )
+
+        self.__todo_list_label = ttk.Label(
+            self.__todo_list_top_frame, text='To do:'
+        )
+
+        self.__todo_list_label.grid(row=0, column=0, sticky=tk.W, padx=(0,8))
+
+        self.__todo_clear = ttk.Button(
+            self.__todo_list_top_frame, text='Clear', command=self.__list_clear
+        )
+
+        self.__todo_clear.grid(row=0, column=1)
+
+        self.__todo_list_top_frame.columnconfigure(0, weight=1)
 
         self.__todo_list = ttk.Treeview(frame, show='tree', height=12)
         self.__todo_list.grid(
@@ -287,9 +304,66 @@ class ToDoList(GridPlaceable):
             row=3, column=1, sticky=tk.NSEW, pady=(0,8)
         )
 
-        self.__todo_add = ttk.Button(frame, text="Add")
-        self.__todo_add.grid(row=4, column=1, sticky=tk.E)
+        self.__todo_list_bot_frame = ttk.Frame(frame)
+        self.__todo_list_bot_frame.grid(row=4, column=0, sticky=tk.NSEW)
+
+        self.__todo_add = ttk.Button(
+            self.__todo_list_bot_frame, text='Add', command=self.__list_add
+        )
+
+        self.__todo_add.grid(row=0, column=0, sticky=tk.E, padx=(0,4))
+
+        self.__todo_rem = ttk.Button(
+            self.__todo_list_bot_frame, text='Remove', command=self.__list_rem
+        )
+
+        self.__todo_rem.grid(row=0, column=1, sticky=tk.W, padx=(4,0))
+
+        self.__todo_list_bot_frame.columnconfigure(0, weight=1)
+        self.__todo_list_bot_frame.columnconfigure(1, weight=1)
+
+        self.__todo_task_bot_frame = ttk.Frame(frame)
+        self.__todo_task_bot_frame.grid(row=4, column=1, sticky=tk.NSEW)
+
+        self.__todo_task_ok = ttk.Button(
+            self.__todo_task_bot_frame, text='Ok', command=self.__add_ok
+        )
+
+        self.__todo_task_ok.grid(row=0, column=0, sticky=tk.E, padx=(0,4))
+
+        self.__todo_task_cancel = ttk.Button(
+            self.__todo_task_bot_frame, text='Cancel', command=self.__add_cancel
+        )
+
+        self.__todo_task_cancel.grid(row=0, column=1, sticky=tk.W, padx=(4,0))
+
+        self.__todo_task_bot_frame.columnconfigure(0, weight=1)
+        self.__todo_task_bot_frame.columnconfigure(1, weight=1)
+        self.__todo_task_bot_frame.grid_remove()
 
         frame.rowconfigure(3, weight=1)
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=1)
+
+    def __task_clear(self): self.__todo_task.delete('0', 'end')
+
+    def __task_descr_clear(self): self.__todo_description.delete('0.0', 'end')
+
+    def __list_clear(self): pass
+
+    def __list_add(self):
+        self.__todo_list_bot_frame.grid_remove()
+        self.__todo_task_bot_frame.grid()
+        
+        self.__task_clear()
+        self.__task_descr_clear()
+
+    def __list_rem(self): pass
+
+    def __add_ok(self):
+        self.__todo_list_bot_frame.grid()
+        self.__todo_task_bot_frame.grid_remove()
+
+    def __add_cancel(self):
+        self.__todo_list_bot_frame.grid()
+        self.__todo_task_bot_frame.grid_remove()
