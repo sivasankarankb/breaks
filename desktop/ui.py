@@ -259,7 +259,9 @@ class DoingNow(GridPlaceable):
     def __clear_click(self): self.__current_task.delete('0.0', 'end')
 
 class ToDoList(GridPlaceable):
-    def initialise(self, frame): self.__create_widgets(frame)
+    def initialise(self, frame):
+        self.__tasks = {}
+        self.__create_widgets(frame)
 
     def __create_widgets(self, frame):
         self.__todo_list_top_frame = ttk.Frame(frame)
@@ -286,6 +288,8 @@ class ToDoList(GridPlaceable):
         self.__todo_list.grid(
             row=1, column=0, rowspan=3, sticky=tk.NSEW, padx=(0,8), pady=(0,8)
         )
+
+        self.__todo_list.bind('<<TreeviewSelect>>', self.__show_selection)
 
         self.__todo_task_label = ttk.Label(frame, text='Task')
         self.__todo_task_label.grid(row=0, column=1, pady=(0,8), sticky=tk.W)
@@ -349,21 +353,47 @@ class ToDoList(GridPlaceable):
 
     def __task_descr_clear(self): self.__todo_description.delete('0.0', 'end')
 
-    def __list_clear(self): pass
+    def __list_clear(self):
+        for task in self.__tasks: self.__todo_list.delete(task)
+        self.__tasks = {}
 
     def __list_add(self):
         self.__todo_list_bot_frame.grid_remove()
         self.__todo_task_bot_frame.grid()
-        
+
         self.__task_clear()
         self.__task_descr_clear()
 
-    def __list_rem(self): pass
+    def __list_rem(self):
+        sel = self.__todo_list.selection()
+
+        if len(sel) == 1:
+            self.__tasks.pop(sel[0])
+            self.__todo_list.delete(sel[0])
+
+    def __show_selection(self, event=None):
+        self.__task_clear()
+        self.__task_descr_clear()
+
+        sel = self.__todo_list.selection()
+
+        if len(sel) == 1:
+            self.__todo_task.insert('0', sel[0])
+            self.__todo_description.insert('0.0', self.__tasks[sel[0]])
 
     def __add_ok(self):
         self.__todo_list_bot_frame.grid()
         self.__todo_task_bot_frame.grid_remove()
 
+        task = self.__todo_task.get()
+        description = self.__todo_description.get('0.0', 'end')
+
+        self.__todo_list.insert('', 'end', iid=task, text=task)
+        self.__tasks[task] = description
+        self.__todo_list.selection_set(task)
+        self.__show_selection()
+
     def __add_cancel(self):
         self.__todo_list_bot_frame.grid()
         self.__todo_task_bot_frame.grid_remove()
+        self.__show_selection()
