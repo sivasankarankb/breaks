@@ -16,6 +16,12 @@ class WorkTimer:
     def __init__(self, ui):
         self.__ui = ui
         self.__ui.set_time_text('Ready?')
+        self.__ui.set_timer_set_button_text('Set')
+
+        self.__ui.set_timer_set_button_listener(
+          self.__timer_set_button_listener
+        )
+
         self.__ui.set_timer_button_text('Let\'s begin!')
         self.__ui.set_timer_button_listener(self.__timer_button_listener)
 
@@ -57,6 +63,11 @@ class WorkTimer:
 
             self.__countdown_timer = None
             self.__timer_button_state = 'begin'
+
+    def __timer_set_button_listener(self):
+        dur = self.__ui.get_integer("Duration?")
+
+        if dur != None and dur > 0: settings.work_period = dur * 60
 
     def __timer_done(self):
         self.__work_data.record_event('time-up')
