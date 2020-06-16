@@ -356,6 +356,7 @@ class ToDoList(GridPlaceable):
     def __list_clear(self):
         for task in self.__tasks: self.__todo_list.delete(task)
         self.__tasks = {}
+        self.__show_selection()
 
     def __list_add(self):
         self.__todo_list_bot_frame.grid_remove()
@@ -370,6 +371,7 @@ class ToDoList(GridPlaceable):
         if len(sel) == 1:
             self.__tasks.pop(sel[0])
             self.__todo_list.delete(sel[0])
+            self.__show_selection()
 
     def __show_selection(self, event=None):
         self.__task_clear()
