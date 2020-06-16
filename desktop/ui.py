@@ -10,7 +10,7 @@ import persistance
 
 class App:
     def __setup_window(self):
-        self.__tk.minsize(width = 300, height = 0)
+        self.__tk.minsize(width = 480, height = 500)
         self.__tk.rowconfigure(0, weight = 1)
         self.__tk.columnconfigure(0, weight = 1)
 
@@ -387,8 +387,12 @@ class ToDoList(GridPlaceable):
         self.__todo_list_bot_frame.grid()
         self.__todo_task_bot_frame.grid_remove()
 
-        task = self.__todo_task.get()
+        task = self.__todo_task.get().strip()
         description = self.__todo_description.get('0.0', 'end')
+
+        if len(task) == 0:
+            self.__show_selection()
+            return
 
         self.__todo_list.insert('', 'end', iid=task, text=task)
         self.__tasks[task] = description
