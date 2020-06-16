@@ -65,7 +65,7 @@ class WorkTimer:
             self.__timer_button_state = 'begin'
 
     def __timer_set_button_listener(self):
-        dur = self.__ui.get_integer("Duration?")
+        dur = self.__ui.get_integer("Duration:")
 
         if dur != None and dur > 0: settings.work_period = dur * 60
 
