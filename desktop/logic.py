@@ -26,11 +26,11 @@ class WorkTimer:
         self.__ui.set_timer_button_listener(self.__timer_button_listener)
 
         self.__timer_button_state = 'init'
-        self.__work_data = persistance.WorkData()
+        #self.__work_data = persistance.WorkData()
 
     def __timer_button_listener(self):
         if self.__timer_button_state == 'init':
-            self.__work_data.begin()
+            #self.__work_data.begin()
             self.__ui.set_timer_button_text('Take a break.')
 
             self.__countdown_timer = timers.Countdown(
@@ -42,7 +42,7 @@ class WorkTimer:
             self.__timer_button_state = 'break'
 
         elif self.__timer_button_state == 'begin':
-            self.__work_data.record_event('start-work')
+            #self.__work_data.record_event('start-work')
             self.__ui.set_timer_button_text('Take a break.')
 
             self.__countdown_timer = timers.Countdown(
@@ -54,7 +54,7 @@ class WorkTimer:
             self.__timer_button_state = 'break'
 
         elif self.__timer_button_state == 'break':
-            self.__work_data.record_event('take-break')
+            #self.__work_data.record_event('take-break')
             self.__ui.set_timer_button_text('Let\'s work!')
 
             if not self.__countdown_timer.completed():
@@ -70,7 +70,7 @@ class WorkTimer:
         if dur != None and dur > 0: settings.work_period = dur * 60
 
     def __timer_done(self):
-        self.__work_data.record_event('time-up')
+        #self.__work_data.record_event('time-up')
         self.__ui.set_time_text('Done')
         Notifier.notify('Take a break.')
 
@@ -78,4 +78,4 @@ class WorkTimer:
         minutes = seconds // 60
         self.__ui.set_time_text( str(minutes) + ' minute(s) left')
 
-    def cleanup(self): self.__work_data.end()
+    def cleanup(self): pass #self.__work_data.end()
