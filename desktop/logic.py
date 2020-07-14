@@ -4,6 +4,7 @@
 import plyer
 import psutil
 import time
+import threading
 
 import timers
 import config
@@ -83,19 +84,31 @@ class WorkTimer:
     def cleanup(self): pass #self.__work_data.end()
 
 class AppMonitor:
-    def __init__(self, ui, list_class, params):
+    def __init__(self, ui):
         ui.set_list_headings(['App', 'Open for'])
         ui.set_list_col_width(1, 60)
 
         ui.set_add_listener(self.__add_app)
-        ui.set_limit_listener(self.__limit_app)
+        ui.set_edit_listener(self.__edit_app)
         ui.set_remove_listener(self.__remove_app)
         
         self.__ui = ui
+        self.__list_class = None
+        self.__list_class_params = ()
+
+        self.__monlist = {}
+        self.__monlist_lock = threading.Lock()
+        
+        self.__app_edit_class = None
+        self.__app_edit_class_params = ()
+
+    def set_app_list_class(self, list_class, params=()):
         self.__list_class = list_class
         self.__list_class_params = params
 
-        self.__monlist = {}
+    def set_app_edit_class(self, edit_class, params=()):
+        self.__app_edit_class = edit_class
+        self.__app_edit_class_params = params
 
     def __update_info(self, info):
         key = info['exe']
@@ -144,6 +157,10 @@ class AppMonitor:
         self.__ui.set_list_content(content, idix=2)
 
     def __refresh_tasks(self):
+        self.__monlist_lock.acquire(blocking=False)
+
+        if not self.__monlist_lock.locked(): return
+        
         for pid in psutil.pids():
             try: info = psutil.Process(pid).as_dict(
                   ['create_time', 'exe', 'pid']
@@ -154,16 +171,23 @@ class AppMonitor:
             if info['exe'] in self.__monlist: self.__update_info(info)
 
         self.__render_list()
+        self.__monlist_lock.release()
         
     def __add_app(self):
+        if self.__list_class == None: return
         dialog = self.__list_class(*self.__list_class_params)
         dialog.set_ok_listener(self.__add_ok)
 
     def __add_ok(self, app_name, app_path):
         if app_path not in self.__monlist:
-            self.__monlist[app_path] = {'name': app_name}
+            with self.__monlist_lock:
+                self.__monlist[app_path] = {'name': app_name, 'limit': None}
             self.__refresh_tasks()
 
-    def __limit_app(self, selection): pass
+    def __edit_app(self, selection):
+        if self.__edit_class == None: return
 
-    def __remove_app(self, selection): pass
+    def __remove_app(self, selection):
+        with self.__monlist_lock:
+            self.__monlist.pop(selection, None)
+        self.__refresh_tasks()

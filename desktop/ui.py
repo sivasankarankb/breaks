@@ -442,11 +442,19 @@ class AppMonitor(GridPlaceable):
         self.__add_button = ttk.Button(self.__container, text='Add')
         self.__add_button.grid(row=0, column=0, padx=(0,8))
 
-        self.__limit_button = ttk.Button(self.__container, text='Limit')
-        self.__limit_button.grid(row=0, column=1, padx=(0,8))
+        self.__edit_button = ttk.Button(
+            self.__container, text='Edit', command=self.__edit_click
+        )
+        
+        self.__edit_button.grid(row=0, column=1, padx=(0,8))
+        self.__edit_button_listener = None
 
-        self.__remove_button = ttk.Button(self.__container, text='Remove')
+        self.__remove_button = ttk.Button(
+            self.__container, text='Remove', command=self.__remove_click
+        )
+        
         self.__remove_button.grid(row=0, column=2)
+        self.__remove_button_listener = None
 
         self.__app_list = ttk.Treeview(frame, height=8)
         self.__app_list.grid(row=1, sticky=tk.NSEW)
@@ -460,11 +468,11 @@ class AppMonitor(GridPlaceable):
     def set_add_listener(self, listener=None):
         self.__add_button.configure(command=listener)
 
-    def set_limit_listener(self, listener=None):
-        self.__limit_button.configure(command=listener)
+    def set_edit_listener(self, listener=None):
+        self.__edit_button_listener = listener
 
     def set_remove_listener(self, listener=None):
-        self.__remove_button.configure(command=listener)
+        self.__remove_button_listener = listener
 
     def set_list_headings(self, headings):
         self.__app_list.configure(columns=headings[1:])
@@ -486,20 +494,30 @@ class AppMonitor(GridPlaceable):
                     '', 'end', iid=item[idix], text=item[0], values=item[1:]
                 )
 
-                self.__app_list_iids.append(item[idix])
-
             else:
                 self.__app_list.item(item[idix], values=item[1:])
                 old_iids.remove(item[idix])
 
+            self.__app_list_iids.append(item[idix])
+
         if len(old_iids) > 0 and clear:
-            self.__app_list.delete(old_iids)
+            for old_app in old_iids: self.__app_list.delete(old_app)
 
     def set_list_col_width(self, col, width):
         try: col = '#' + str(int(col))
         except: pass
         self.__app_list.column(col, width=width)
 
+    def __selection_listener(self, listener):
+        selection = self.__app_list.selection()
+        
+        if len(selection) == 1 and listener != None: listener(selection[0])
+
+    def __edit_click(self):
+        self.__selection_listener(self.__edit_button_listener)
+    
+    def __remove_click(self):
+        self.__selection_listener(self.__remove_button_listener)
 
 class AppList:
     def __refresh_list(self):
@@ -516,7 +534,7 @@ class AppList:
 
         try:
             if len(self.__app_ids) > 0:
-                self.__process_list.delete(self.__app_ids)
+                for app in self.__app_ids: self.__process_list.delete(app)
 
         except: pass
 
