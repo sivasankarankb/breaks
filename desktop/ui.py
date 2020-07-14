@@ -10,7 +10,7 @@ import persistance
 
 class App:
     def __setup_window(self):
-        self.__tk.minsize(width = 480, height = 150)
+        self.__tk.minsize(width = 480, height = 350)
         self.__tk.rowconfigure(0, weight = 1)
         self.__tk.columnconfigure(0, weight = 1)
 
@@ -430,4 +430,73 @@ class Toolbar(GridPlaceable):
             self.__buttons[button].configure(command=listener)
             return True
 
-        return false
+        return False
+
+class AppMonitor(GridPlaceable):
+    def initialise(self, frame):
+        self.__container = ttk.Frame(frame)
+        self.__container.grid(column=0, pady=(0,16))        
+        
+        self.__add_button = ttk.Button(self.__container, text='Add')
+        self.__add_button.grid(row=0, column=0, padx=(0,8))
+
+        self.__limit_button = ttk.Button(self.__container, text='Limit')
+        self.__limit_button.grid(row=0, column=1, padx=(0,8))
+
+        self.__remove_button = ttk.Button(self.__container, text='Remove')
+        self.__remove_button.grid(row=0, column=2)
+
+        self.__app_list = ttk.Treeview(frame, height=8)
+        self.__app_list.grid(row=1, sticky=tk.NSEW)
+
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(1, weight=1)
+        frame.grid_configure(pady=(0,16))
+
+        self.__app_list_iids = []
+
+    def set_add_listener(self, listener=None):
+        self.__add_button.configure(command=listener)
+
+    def set_limit_listener(self, listener=None):
+        self.__limit_button.configure(command=listener)
+
+    def set_remove_listener(self, listener=None):
+        self.__remove_button.configure(command=listener)
+
+    def set_list_headings(self, headings):
+        self.__app_list.configure(columns=headings[1:])
+        self.__app_list.heading('#0', text=headings[0])
+        for heading in headings[1:]:
+            self.__app_list.heading(heading, text=heading)
+
+    def set_list_content(self, content=None, clear=True):
+        if len(self.__app_list_iids) > 0 :
+            old_iids = self.__app_list_iids[:]
+
+        else: old_iids = []
+            
+        self.__app_list_iids = []
+        
+        if content==None: return
+
+        for item in content:
+            if item[0] not in old_iids:
+                self.__app_list.insert(
+                    '', 'end', iid=item[0], text=item[0], values=item[1:]
+                )
+
+                self.__app_list_iids.append(item[0])
+
+            else:
+                self.__app_list.item(item[0], values=item[1:])
+                old_iids.remove(item[0])
+
+        if len(old_iids) > 0 and clear:
+            self.__app_list.delete(old_iids)
+
+    def set_list_col_width(self, col, width):
+        try: col = '#' + str(int(col))
+        except: pass
+        self.__app_list.column(col, width=width, stretch=False)
+        

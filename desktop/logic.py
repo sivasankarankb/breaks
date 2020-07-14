@@ -79,3 +79,9 @@ class WorkTimer:
         self.__ui.set_time_text( str(minutes) + ' minute(s) left')
 
     def cleanup(self): pass #self.__work_data.end()
+
+class AppMonitor:
+    def __init__(self, ui):
+        ui.set_list_headings(['App', 'Open for'])
+        ui.set_list_col_width(1, 120)
+        self.__ui = ui
