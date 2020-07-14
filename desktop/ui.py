@@ -10,7 +10,7 @@ import persistance
 
 class App:
     def __setup_window(self):
-        self.__tk.minsize(width = 480, height = 500)
+        self.__tk.minsize(width = 480, height = 150)
         self.__tk.rowconfigure(0, weight = 1)
         self.__tk.columnconfigure(0, weight = 1)
 
@@ -66,9 +66,14 @@ class GridPlaceable:
             if expand == 'vertical' or expand == 'both':
                 master.rowconfigure(row, weight=1)
 
+        self.__frame = frame
         self.initialise(frame)
 
     def initialise(self, frame): pass
+
+    def hide(self): self.__frame.grid_remove()
+
+    def show(self): self.__frame.grid()
 
 class WorkTimer(GridPlaceable):
     def initialise(self, frame): self.__create_widgets(frame)
@@ -403,3 +408,26 @@ class ToDoList(GridPlaceable):
         self.__todo_list_bot_frame.grid()
         self.__todo_task_bot_frame.grid_remove()
         self.__show_selection()
+
+class Toolbar(GridPlaceable):
+    def __init__(self, *args, button_labels=None, **kwargs):
+        self.__button_labels = button_labels
+        self.__buttons = {}
+        GridPlaceable.__init__(self, *args, **kwargs)
+        
+    def initialise(self, frame):
+        if self.__button_labels == None: return
+
+        frame.grid_configure(padx=(0,16))
+        
+        for text in self.__button_labels:
+            button = ttk.Button(frame, text=text)
+            button.grid(pady=(0,8))
+            self.__buttons[text] = button
+
+    def set_listener(self, button, listener):
+        if button in self.__buttons:
+            self.__buttons[button].configure(command=listener)
+            return True
+
+        return false
