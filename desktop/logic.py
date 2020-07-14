@@ -2,6 +2,8 @@
 # logic.py - Core logic
 
 import plyer
+import psutil
+import time
 
 import timers
 import config
@@ -81,7 +83,87 @@ class WorkTimer:
     def cleanup(self): pass #self.__work_data.end()
 
 class AppMonitor:
-    def __init__(self, ui):
+    def __init__(self, ui, list_class, params):
         ui.set_list_headings(['App', 'Open for'])
-        ui.set_list_col_width(1, 120)
+        ui.set_list_col_width(1, 60)
+
+        ui.set_add_listener(self.__add_app)
+        ui.set_limit_listener(self.__limit_app)
+        ui.set_remove_listener(self.__remove_app)
+        
         self.__ui = ui
+        self.__list_class = list_class
+        self.__list_class_params = params
+
+        self.__monlist = {}
+
+    def __update_info(self, info):
+        key = info['exe']
+
+        start = info['create_time']
+        now = time.time()
+        
+        if 'last-seen' not in self.__monlist[key]: # Initial entry
+            self.__monlist[key]['or-first-seen'] = start
+            self.__monlist[key]['first-seen'] = start
+            self.__monlist[key]['last-seen'] = now
+            self.__monlist[key]['duration'] = now - start
+
+        else:
+            
+            last = self.__monlist[key]['last-seen']
+            delay = now - last
+
+            if delay > 60: # Stale
+                if start > self.__monlist[key]['first-seen']:
+                    self.__monlist[key]['first-seen'] = start
+                    last = start
+
+                self.__monlist[key]['duration'] += now - last
+                self.__monlist[key]['last-seen'] = now
+        
+
+    def __render_list(self):
+        content = []
+
+        for exe in self.__monlist:
+            task = self.__monlist[exe]
+
+            min = int(task['duration'] // 60)
+            hrs = int(min // 60)
+            min = min % 60
+
+            duration = str(hrs) + 'hr ' + str(min) + 'min'
+            
+            entry = [task['name']]
+            entry.append(duration)
+            entry.append(exe)
+            
+            content.append(entry)
+
+        self.__ui.set_list_content(content, idix=2)
+
+    def __refresh_tasks(self):
+        for pid in psutil.pids():
+            try: info = psutil.Process(pid).as_dict(
+                  ['create_time', 'exe', 'pid']
+                )
+
+            except: continue
+
+            if info['exe'] in self.__monlist: self.__update_info(info)
+
+        self.__render_list()
+        
+    def __add_app(self):
+        dialog = self.__list_class(*self.__list_class_params)
+        dialog.set_ok_listener(self.__add_ok)
+
+    def __add_ok(self, app_name, app_path):
+        if app_path not in self.__monlist:
+            self.__monlist[app_path] = {'name': app_name}
+            self.__refresh_tasks()
+
+    def __limit_app(self, selection): pass
+
+    def __remove_app(self, selection): pass

@@ -25,7 +25,7 @@ if __name__ == '__main__':
         master=master, row=0, column=1, expand='both'
     )
 
-    app_monitor = logic.AppMonitor(app_monitor_ui)
+    app_monitor = logic.AppMonitor(app_monitor_ui, ui.AppList, (master,))
     
     #work_time_viewer = ui.WorkTimeViewer(master=master, expand=True)
 
