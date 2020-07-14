@@ -168,24 +168,49 @@ class AppMonitor:
 
             except: continue
 
-            if info['exe'] in self.__monlist: self.__update_info(info)
+            if info['exe'] in self.__monlist:
+                self.__update_info(info)
+                name = self.__monlist[info['exe']]['name']
+                limit = self.__monlist[info['exe']]['limit']
+                duration = self.__monlist[info['exe']]['duration']
+
+                if limit != None and duration > limit:
+                    Notifier.notify(name + ' has been open beyond limits! Please close it.')
 
         self.__render_list()
         self.__monlist_lock.release()
         
     def __add_app(self):
         if self.__list_class == None: return
+
         dialog = self.__list_class(*self.__list_class_params)
         dialog.set_ok_listener(self.__add_ok)
 
     def __add_ok(self, app_name, app_path):
         if app_path not in self.__monlist:
             with self.__monlist_lock:
-                self.__monlist[app_path] = {'name': app_name, 'limit': None}
+                self.__monlist[app_path] = {'name': app_name, 'limit': None, 'duration': 0}
+
             self.__refresh_tasks()
+            self.__edit_app(app_path)
 
     def __edit_app(self, selection):
-        if self.__edit_class == None: return
+        if self.__app_edit_class == None: return
+
+        dialog = self.__app_edit_class(*self.__app_edit_class_params)
+        dialog.set_ok_listener(self.__edit_ok)
+
+        dialog.set_default_values(
+            self.__monlist[selection]['name'],
+            self.__monlist[selection]['limit'], selection
+        )
+
+    def __edit_ok(self, name, limit, selection):
+        with self.__monlist_lock:
+            self.__monlist[selection]['name'] = name
+            self.__monlist[selection]['limit'] = limit
+
+        self.__refresh_tasks()
 
     def __remove_app(self, selection):
         with self.__monlist_lock:
