@@ -68,7 +68,7 @@ class WorkTimer:
             self.__timer_button_state = 'begin'
 
     def __timer_set_button_listener(self):
-        dur = self.__ui.get_integer("Duration:")
+        dur = self.__ui.get_integer("Timer interval in minutes:", int(settings.work_period//60))
 
         if dur != None and dur > 0: settings.work_period = dur * 60
 
@@ -102,13 +102,8 @@ class AppMonitor:
         self.__app_edit_class = None
         self.__app_edit_class_params = ()
 
-    def set_app_list_class(self, list_class, params=()):
-        self.__list_class = list_class
-        self.__list_class_params = params
-
-    def set_app_edit_class(self, edit_class, params=()):
-        self.__app_edit_class = edit_class
-        self.__app_edit_class_params = params
+        self.__autorefresh_on = False
+        self.__autorefresh_interval = 60 # seconds
 
     def __update_info(self, info):
         key = info['exe']
@@ -126,8 +121,9 @@ class AppMonitor:
             
             last = self.__monlist[key]['last-seen']
             delay = now - last
+            first = self.__monlist[key]['first-seen']
 
-            if delay > 60: # Stale
+            if delay > self.__autorefresh_interval or start==first: # Stale
                 if start > self.__monlist[key]['first-seen']:
                     self.__monlist[key]['first-seen'] = start
                     last = start
@@ -175,7 +171,7 @@ class AppMonitor:
                 duration = self.__monlist[info['exe']]['duration']
 
                 if limit != None and duration > limit:
-                    Notifier.notify(name + ' has been open beyond limits! Please close it.')
+                    Notifier.notify(name + ' has exceeded time limit!\nPlease consider closing it.')
 
         self.__render_list()
         self.__monlist_lock.release()
@@ -186,6 +182,26 @@ class AppMonitor:
         dialog = self.__list_class(*self.__list_class_params)
         dialog.set_ok_listener(self.__add_ok)
 
+    def __autorefresh_task(self):
+        if not self.__autorefresh_on: return
+        
+        self.__autorefresh_timer = timers.Countdown(
+            self.__autorefresh_interval, self.__autorefresh_task
+        )
+
+        self.__autorefresh_timer.start()
+        self.__refresh_tasks()
+
+    def __begin_autorefresh(self):
+        if not self.__autorefresh_on:
+            self.__autorefresh_on = True
+            self.__autorefresh_task()
+
+    def __end_autorefresh(self):
+        if self.__autorefresh_on:
+            self.__autorefresh_on = False
+            self.__autorefresh_timer.cancel()
+
     def __add_ok(self, app_name, app_path):
         if app_path not in self.__monlist:
             with self.__monlist_lock:
@@ -193,6 +209,8 @@ class AppMonitor:
 
             self.__refresh_tasks()
             self.__edit_app(app_path)
+
+            self.__begin_autorefresh()
 
     def __edit_app(self, selection):
         if self.__app_edit_class == None: return
@@ -215,4 +233,15 @@ class AppMonitor:
     def __remove_app(self, selection):
         with self.__monlist_lock:
             self.__monlist.pop(selection, None)
+            if len(self.__monlist) == 0: self.__end_autorefresh()
         self.__refresh_tasks()
+
+    def set_app_list_class(self, list_class, params=()):
+        self.__list_class = list_class
+        self.__list_class_params = params
+
+    def set_app_edit_class(self, edit_class, params=()):
+        self.__app_edit_class = edit_class
+        self.__app_edit_class_params = params
+
+    def cleanup(self): self.__end_autorefresh()

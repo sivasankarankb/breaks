@@ -12,7 +12,7 @@ import psutil
 
 class App:
     def __setup_window(self):
-        self.__tk.minsize(width = 480, height = 350)
+        self.__tk.minsize(width = 600, height = 450)
         self.__tk.rowconfigure(0, weight = 1)
         self.__tk.columnconfigure(0, weight = 1)
 
@@ -127,8 +127,8 @@ class WorkTimer(GridPlaceable):
     def set_timer_set_button_listener(self, listener = None):
         self.__timer_set_button_listener = listener
 
-    def get_integer(self, message, title=''):
-        value = tkdlg.askstring(title, message)
+    def get_integer(self, message, default='0', title=''):
+        value = tkdlg.askstring(title, message, initialvalue=default)
 
         try: return int(value)
         except: return None
@@ -298,21 +298,31 @@ class ToDoList(GridPlaceable):
 
         self.__todo_list.bind('<<TreeviewSelect>>', self.__show_selection)
 
+        self.__todo_list_scroll = ttk.Scrollbar(
+            frame, command=self.__todo_list.yview, orient='vertical'
+        )
+
+        self.__todo_list_scroll.grid(
+            row=1, column=1, rowspan=3, sticky=tk.NS, padx=(0,8), pady=(0,8)
+        )
+
+        self.__todo_list.configure(yscrollcommand=self.__todo_list_scroll.set)
+
         self.__todo_task_label = ttk.Label(frame, text='Task')
-        self.__todo_task_label.grid(row=0, column=1, pady=(0,8), sticky=tk.W)
+        self.__todo_task_label.grid(row=0, column=2, pady=(0,8), sticky=tk.W)
 
         self.__todo_task = ttk.Entry(frame)
-        self.__todo_task.grid(row=1, column=1, sticky=tk.EW, pady=(0,8))
+        self.__todo_task.grid(row=1, column=2, sticky=tk.EW, pady=(0,8))
 
         self.__todo_desc_label = ttk.Label(frame, text='Description')
-        self.__todo_desc_label.grid(row=2, column=1, pady=(0,8), sticky=tk.W)
+        self.__todo_desc_label.grid(row=2, column=2, pady=(0,8), sticky=tk.W)
 
         self.__todo_description = tk.Text(
             frame, width=40, height=10, wrap='word', padx=4, pady=4
         )
 
         self.__todo_description.grid(
-            row=3, column=1, sticky=tk.NSEW, pady=(0,8)
+            row=3, column=2, sticky=tk.NSEW, pady=(0,8)
         )
 
         self.__todo_list_bot_frame = ttk.Frame(frame)
@@ -334,7 +344,7 @@ class ToDoList(GridPlaceable):
         self.__todo_list_bot_frame.columnconfigure(1, weight=1)
 
         self.__todo_task_bot_frame = ttk.Frame(frame)
-        self.__todo_task_bot_frame.grid(row=4, column=1, sticky=tk.NSEW)
+        self.__todo_task_bot_frame.grid(row=4, column=2, sticky=tk.NSEW)
 
         self.__todo_task_ok = ttk.Button(
             self.__todo_task_bot_frame, text='Ok', command=self.__add_ok
@@ -354,7 +364,7 @@ class ToDoList(GridPlaceable):
 
         frame.rowconfigure(3, weight=1)
         frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=1)
 
     def __task_clear(self): self.__todo_task.delete('0', 'end')
 
@@ -437,7 +447,7 @@ class Toolbar(GridPlaceable):
 class AppMonitor(GridPlaceable):
     def initialise(self, frame):
         self.__container = ttk.Frame(frame)
-        self.__container.grid(column=0, pady=(0,16))        
+        self.__container.grid(column=0, columnspan=2, pady=(0,16))        
         
         self.__add_button = ttk.Button(self.__container, text='Add')
         self.__add_button.grid(row=0, column=0, padx=(0,8))
@@ -457,7 +467,15 @@ class AppMonitor(GridPlaceable):
         self.__remove_button_listener = None
 
         self.__app_list = ttk.Treeview(frame, height=8)
-        self.__app_list.grid(row=1, sticky=tk.NSEW)
+        self.__app_list.grid(row=1, padx=(0,8), sticky=tk.NSEW)
+
+        self.__list_scroller = ttk.Scrollbar(
+            frame, command=self.__app_list.yview, orient='vertical'
+        )
+
+        self.__list_scroller.grid(row=1, column=1, sticky=tk.NS)
+
+        self.__app_list.configure(yscrollcommand=self.__list_scroller.set)
 
         frame.columnconfigure(0, weight=1)
         frame.rowconfigure(1, weight=1)
@@ -553,7 +571,7 @@ class AppList:
         self.__window.columnconfigure(0, weight=1)
 
         self.__window.title('Select App')
-        self.__window.minsize(width=650, height=200)
+        self.__window.minsize(width=480, height=450)
         
         self.__container = ttk.Frame(self.__window)
         self.__container.grid(
@@ -580,11 +598,23 @@ class AppList:
             row=1, column=0, pady=(0,8), sticky=tk.NSEW
         )
 
+        self.__list_scroll_right = ttk.Scrollbar(
+            self.__container, orient='vertical'
+        )
+
+        self.__list_scroll_right.grid(
+            row=1, column=1, pady=(0,8), sticky=tk.NS
+        )
+
+        self.__process_list.configure(yscrollcommand=self.__list_scroll_right.set)
+        self.__list_scroll_right.configure(command=self.__process_list.yview)
+        
+
         self.__ok_button = ttk.Button(
             self.__container, text='Ok', command=self.__ok_click
         )
 
-        self.__ok_button.grid(row=2, column=0, sticky=tk.E)
+        self.__ok_button.grid(row=3, column=0, columnspan=2, sticky=tk.E)
 
         self.__ok_button_listener = None
 
@@ -715,11 +745,13 @@ class AppEdit:
             limit = None
             
             if self.__limit_toggle_var.get() == 'on':
-                hrs = self.__time_hrs.get().strip()
-                mins = self.__time_min.get().strip()
-                
-                limit = (int(hrs) * 60 + int(mins)) * 60
-                
+                try:
+                    hrs = int(self.__time_hrs.get().strip())
+                    mins =int(self.__time_min.get().strip())
+
+                    if hrs >= 0 and mins >= 0 : limit = (hrs * 60 + mins) * 60
+                    
+                except: pass
 
             self.__ok_button_listener(name, limit, self.__app_identity)
 
@@ -757,3 +789,51 @@ class AppEdit:
             
 
     def set_ok_listener(self, listener): self.__ok_button_listener = listener
+
+class AboutBox(GridPlaceable):
+    def initialise(self, frame):
+        iframe = ttk.Frame(frame)
+        iframe.grid()
+
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(0, weight=1)
+        
+        l1 = ttk.Label(iframe, text='Breaks')
+        l1.grid(pady=(0,8))
+        
+        l2 = ttk.Label(iframe, text='Version 0.3')
+        l2.grid(pady=(0,8))
+
+        l3 = ttk.Label(iframe, text='https://githhub.com/sivasankarankb/breaks')
+        l3.grid(pady=(0,8))
+
+        lcopy = ttk.Label(iframe, text='Copyright (c) 2020 Sivasankaran K B')
+        lcopy.grid(pady=(0,20))
+
+        license_txt ='''\
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation.'''
+
+        llicense = ttk.Label(iframe, text=license_txt)
+        llicense.grid(pady=(0,20))
+
+        l4 = ttk.Label(iframe, text='-- Contributors --')
+        l4.grid(pady=(0,20))
+
+        ll = ttk.Label(iframe, text='Rabeeba Ibrahim')
+        ll.grid(pady=(0,8))
+
+        ll = ttk.Label(iframe, text='Shasna Shemsudheen')
+        ll.grid(pady=(0,8))
+
+        ll = ttk.Label(iframe, text='Krishnapriya T R')
+        ll.grid(pady=(0,16))
+
+        ll = ttk.Label(iframe, text='Serin V Simpson')
+        ll.grid(pady=(0,8))
+
+        ll = ttk.Label(iframe, text='Sudharsanan K B')
+        ll.grid(pady=(0,8))
+
+        iframe.columnconfigure(0, weight=1)

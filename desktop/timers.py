@@ -74,6 +74,8 @@ class Countdown:
             progress=self.__update, granularity=granularity
         )
 
+        self.__progress_callback = None
+
     def start(self):
         if not self.__started:
             self.__started = True
