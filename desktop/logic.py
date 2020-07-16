@@ -117,6 +117,8 @@ class AppMonitor:
             self.__monlist[key]['last-seen'] = now
             self.__monlist[key]['duration'] = now - start
 
+            return True
+
         else:
             
             last = self.__monlist[key]['last-seen']
@@ -124,13 +126,17 @@ class AppMonitor:
             first = self.__monlist[key]['first-seen']
 
             if delay > self.__autorefresh_interval or start==first: # Stale
+                
                 if start > self.__monlist[key]['first-seen']:
                     self.__monlist[key]['first-seen'] = start
                     last = start
 
                 self.__monlist[key]['duration'] += now - last
                 self.__monlist[key]['last-seen'] = now
-        
+
+                return True
+
+        return False
 
     def __render_list(self):
         content = []
@@ -165,13 +171,15 @@ class AppMonitor:
             except: continue
 
             if info['exe'] in self.__monlist:
-                self.__update_info(info)
-                name = self.__monlist[info['exe']]['name']
-                limit = self.__monlist[info['exe']]['limit']
-                duration = self.__monlist[info['exe']]['duration']
+                changed = self.__update_info(info)
 
-                if limit != None and duration > limit:
-                    Notifier.notify(name + ' has exceeded time limit!\nPlease consider closing it.')
+                if changed:
+                    name = self.__monlist[info['exe']]['name']
+                    limit = self.__monlist[info['exe']]['limit']
+                    duration = self.__monlist[info['exe']]['duration']
+
+                    if limit != None and duration > limit:
+                        Notifier.notify(name + ' has exceeded it\'s time limit!\nPlease consider closing it.')
 
         self.__render_list()
         self.__monlist_lock.release()
