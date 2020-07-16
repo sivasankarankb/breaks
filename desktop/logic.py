@@ -110,7 +110,7 @@ class AppMonitor:
 
         if data != None:
             self.__monlist = data
-            self.__begin_autorefresh()
+            if len(data) > 0: self.__begin_autorefresh()
 
     def __update_info(self, info):
         key = info['exe']
