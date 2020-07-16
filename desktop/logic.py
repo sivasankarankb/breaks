@@ -98,6 +98,13 @@ class AppMonitor:
 
         self.__monlist = {}
         self.__monlist_lock = threading.Lock()
+
+        pers = persistance.AppMonitorData()
+        data = pers.load()
+
+        if data != None:
+            self.__monlist = data
+            self.__refresh_tasks()
         
         self.__app_edit_class = None
         self.__app_edit_class_params = ()
@@ -252,4 +259,18 @@ class AppMonitor:
         self.__app_edit_class = edit_class
         self.__app_edit_class_params = params
 
-    def cleanup(self): self.__end_autorefresh()
+    def cleanup(self):
+        self.__end_autorefresh()
+        
+        pers = persistance.AppMonitorData()
+
+        data = {}
+        ml = self.__monlist
+
+        for key in ml:
+            data[key] = {
+                'name': ml[key]['name'], 'limit': ml[key]['limit'],
+                'duration': 0
+            }
+            
+        pers.save(data)
