@@ -11,6 +11,7 @@ if __name__ == '__main__':
 
     toolbar = ui.Toolbar(
         button_labels=['Home', 'To do', 'App Monitor', 'About'],
+        button_icons=['home', 'notes', 'screen', 'info'],
         master=master, row=0, column=0, expand='vertical'
     )
     

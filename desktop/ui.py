@@ -30,6 +30,8 @@ class App:
         self.__tk.title(config.app_name)
         self.__tk.protocol("WM_DELETE_WINDOW", self.__exit)
 
+        self.__tk.iconphoto(True, tk.PhotoImage(file='icons/icon.png'))
+
         self.__outer_frame = ttk.Frame(self.__tk)
         self.__outer_frame.grid(sticky=tk.NSEW, padx=16, pady=(16,0))
 
@@ -422,8 +424,9 @@ class ToDoList(GridPlaceable):
         self.__show_selection()
 
 class Toolbar(GridPlaceable):
-    def __init__(self, *args, button_labels=None, **kwargs):
+    def __init__(self, *args, button_labels=None, button_icons=None, **kwargs):
         self.__button_labels = button_labels
+        self.__button_icons = button_icons
         self.__buttons = {}
         GridPlaceable.__init__(self, *args, **kwargs)
         
@@ -431,11 +434,26 @@ class Toolbar(GridPlaceable):
         if self.__button_labels == None: return
 
         frame.grid_configure(padx=(0,16))
+        index=0
+        self.__icons = []
         
         for text in self.__button_labels:
-            button = ttk.Button(frame, text=text)
+            image = None
+            
+            if self.__button_icons != None:
+                name = self.__button_icons[index]
+                path = 'icons/' + name + '.png'
+                
+                try:
+                    image = tk.PhotoImage(file=path)
+                    self.__icons.append(image) # Save reference, else GC'd
+                except: pass
+
+
+            button = ttk.Button(frame, text=text, image=image)
             button.grid(pady=(0,8))
             self.__buttons[text] = button
+            index += 1
 
     def set_listener(self, button, listener):
         if button in self.__buttons:
