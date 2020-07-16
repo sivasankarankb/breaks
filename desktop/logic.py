@@ -97,20 +97,20 @@ class AppMonitor:
         self.__list_class_params = ()
 
         self.__monlist = {}
-        self.__monlist_lock = threading.Lock()
-
-        pers = persistance.AppMonitorData()
-        data = pers.load()
-
-        if data != None:
-            self.__monlist = data
-            self.__refresh_tasks()
+        self.__monlist_lock = threading.Lock()        
         
         self.__app_edit_class = None
         self.__app_edit_class_params = ()
 
         self.__autorefresh_on = False
         self.__autorefresh_interval = 60 # seconds
+
+        pers = persistance.AppMonitorData()
+        data = pers.load() # Load monitoring list, if any.
+
+        if data != None:
+            self.__monlist = data
+            self.__begin_autorefresh()
 
     def __update_info(self, info):
         key = info['exe']

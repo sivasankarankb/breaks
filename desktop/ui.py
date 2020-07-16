@@ -763,13 +763,14 @@ class AppEdit:
             limit = None
             
             if self.__limit_toggle_var.get() == 'on':
-                try:
-                    hrs = int(self.__time_hrs.get().strip())
-                    mins =int(self.__time_min.get().strip())
+                try: hrs = int(self.__time_hrs.get().strip())
+                except: hrs = 0
+                
+                try: mins = int(self.__time_min.get().strip())
+                except: mins = 0
 
-                    if hrs >= 0 and mins >= 0 : limit = (hrs * 60 + mins) * 60
-                    
-                except: pass
+                if hrs > -1 and mins > -1 and (hrs != 0 or mins != 0):
+                    limit = (hrs * 60 + mins) * 60
 
             self.__ok_button_listener(name, limit, self.__app_identity)
 
