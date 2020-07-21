@@ -817,16 +817,16 @@ class AboutBox(GridPlaceable):
         frame.columnconfigure(0, weight=1)
         frame.rowconfigure(0, weight=1)
         
-        l1 = ttk.Label(iframe, text='Breaks')
+        l1 = ttk.Label(iframe, text=config.app_name)
         l1.grid(pady=(0,8))
         
-        l2 = ttk.Label(iframe, text='Version 0.3')
+        l2 = ttk.Label(iframe, text='Version ' + config.app_version)
         l2.grid(pady=(0,8))
 
         l3 = ttk.Label(iframe, text='https://githhub.com/sivasankarankb/breaks')
         l3.grid(pady=(0,8))
 
-        lcopy = ttk.Label(iframe, text='Copyright (c) 2020 Sivasankaran K B')
+        lcopy = ttk.Label(iframe, text='Copyright (C) 2020 Sivasankaran K B')
         lcopy.grid(pady=(0,20))
 
         license_txt ='''\
