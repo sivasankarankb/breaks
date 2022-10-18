@@ -3,15 +3,16 @@
 # app.py - What ties it all together.
 
 from main_window import MainWindow
-import ui
+import toolbar
 import work_timer
+import ui
 import logic
 
 if __name__ == '__main__':
     main_window = MainWindow()
     master = main_window.get_nesting_window()
 
-    toolbar = ui.Toolbar(
+    toolbar = toolbar.Toolbar(
         button_labels=['Home', 'To do', 'App Monitor', 'About'],
         button_icons=['home', 'notes', 'screen', 'info'],
         master=master, row=0, column=0, expand='vertical'
