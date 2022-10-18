@@ -4,6 +4,7 @@
 
 from main_window import MainWindow
 import ui
+import work_timer
 import logic
 
 if __name__ == '__main__':
@@ -18,8 +19,8 @@ if __name__ == '__main__':
     
     doing_now = ui.DoingNow(master=master, row=0, column=1, expand='both')
 
-    work_timer_ui = ui.WorkTimer(master=master, column=1, expand='horizontal')
-    work_timer_logic = logic.WorkTimer(work_timer_ui)
+    work_timer_ui = work_timer.WorkTimerUI(master=master, column=1, expand='horizontal')
+    work_timer_logic = work_timer.WorkTimer(work_timer_ui)
     
     to_do_list = ui.ToDoList(master=master, row=0, column=1, expand='both')
 

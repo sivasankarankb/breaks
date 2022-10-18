@@ -2,7 +2,6 @@
 # ui.py - (Graphical) User Interface stuff
 
 import tkinter as tk
-import tkinter.simpledialog as tkdlg
 from tkinter import ttk
 
 import config
@@ -38,62 +37,6 @@ class GridPlaceable:
     def hide(self): self.__frame.grid_remove()
 
     def show(self): self.__frame.grid()
-
-class WorkTimer(GridPlaceable):
-    def initialise(self, frame): self.__create_widgets(frame)
-
-    def __create_widgets(self, frame):
-        iframe = ttk.Frame(frame, padding=8, borderwidth=1, relief='solid')
-        iframe.grid(sticky=tk.NSEW)
-
-        frame.rowconfigure(0, weight=1)
-        frame.columnconfigure(0, weight=1)
-
-        frame = iframe
-
-        self.__timer_time = ttk.Label(frame)
-        self.__timer_time.grid(row=0, column=0)
-
-        self.__timer_set_button = ttk.Button(
-            frame, command=self.__click_timer_set_button
-        )
-
-        self.__timer_set_button.grid(row=0, column=1, padx=(0,8))
-        self.__timer_set_button_listener = None
-
-        self.__timer_button = ttk.Button(
-            frame, command=self.__click_timer_button
-        )
-        self.__timer_button.grid(row=0, column=2)
-        self.__timer_button_listener = None
-
-        frame.columnconfigure(0, weight = 1)
-
-    def __click_timer_button(self):
-        if self.__timer_button_listener != None: self.__timer_button_listener()
-
-    def __click_timer_set_button(self):
-        if self.__timer_set_button_listener != None:
-            self.__timer_set_button_listener()
-
-    def set_time_text(self, txt): self.__timer_time.config(text = txt)
-
-    def set_timer_button_text(self, txt): self.__timer_button.config(text = txt)
-
-    def set_timer_button_listener(self, listener = None):
-        self.__timer_button_listener = listener
-
-    def set_timer_set_button_text(self, txt):
-        self.__timer_set_button.config(text = txt)
-
-    def set_timer_set_button_listener(self, listener = None):
-        self.__timer_set_button_listener = listener
-
-    def get_integer(self, message, default='0', title=''):
-        value = tkdlg.askstring(title, message, initialvalue=default)
-
-        try: return int(value)
-        except: return None
 
 
 class TimeGraph(GridPlaceable):
