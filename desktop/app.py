@@ -8,7 +8,7 @@ import work_timer
 import doing_now
 import todo_list
 import app_monitor
-import ui
+import about_box
 
 if __name__ == '__main__':
     main_window = main_window.MainWindow()
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     app_monitor_inst.set_app_list_class(app_monitor.AppListUI, (master,))
     app_monitor_inst.set_app_edit_class(app_monitor.AppEditUI, (master,))
 
-    about_box = ui.AboutBox(
+    about_box = about_box.AboutBox(
         master=master, row=0, column=1, expand='both'
     )
 
