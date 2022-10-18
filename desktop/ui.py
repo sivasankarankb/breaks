@@ -142,8 +142,7 @@ class TimeGraph(GridPlaceable):
     def __create_widgets(self, frame):
         self.__canvas = tk.Canvas(frame, width=1, height=16)
         self.__canvas.grid(sticky=tk.NSEW)
-
-        #frame.grid_configure(sticky=tk.EW)
+        
         frame.rowconfigure(0, weight=1)
         frame.columnconfigure(0, weight=1)
 
