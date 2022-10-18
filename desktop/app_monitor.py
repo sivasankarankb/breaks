@@ -546,6 +546,5 @@ class AppEditUI:
             self.__limit_toggled()
             self.__time_hrs.insert(0, str(hrs))
             self.__time_min.insert(0, str(mins))
-            
 
     def set_ok_listener(self, listener): self.__ok_button_listener = listener
