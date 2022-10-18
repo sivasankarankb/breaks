@@ -7,8 +7,8 @@ import toolbar
 import work_timer
 import doing_now
 import todo_list
+import app_monitor
 import ui
-import logic
 
 if __name__ == '__main__':
     main_window = main_window.MainWindow()
@@ -27,13 +27,13 @@ if __name__ == '__main__':
     
     to_do_list = todo_list.ToDoList(master=master, row=0, column=1, expand='both')
 
-    app_monitor_ui = ui.AppMonitor(
+    app_monitor_ui = app_monitor.AppMonitorUI(
         master=master, row=0, column=1, expand='both'
     )
 
-    app_monitor = logic.AppMonitor(app_monitor_ui)
-    app_monitor.set_app_list_class(ui.AppList, (master,))
-    app_monitor.set_app_edit_class(ui.AppEdit, (master,))
+    app_monitor_inst = app_monitor.AppMonitor(app_monitor_ui)
+    app_monitor_inst.set_app_list_class(app_monitor.AppListUI, (master,))
+    app_monitor_inst.set_app_edit_class(app_monitor.AppEditUI, (master,))
 
     about_box = ui.AboutBox(
         master=master, row=0, column=1, expand='both'
@@ -84,4 +84,4 @@ if __name__ == '__main__':
 
     main_window.start()
     work_timer_logic.cleanup()
-    app_monitor.cleanup()
+    app_monitor_inst.cleanup()
