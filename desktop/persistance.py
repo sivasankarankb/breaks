@@ -43,56 +43,7 @@ class PersistanceDir:
         storage[key] = data
         storage.close()
         return True
-            
 
-class WorkData:
-    def __init__(self):
-        self.__lap_timer = timers.Lap()
-        self.__events = []
-        self.__begun = False
-        self.__ended = False
-
-        self.__persistance_dir = PersistanceDir()
-
-    def begin(self):
-        if self.__begun: return
-
-        self.__lap_timer.start()
-        self.__begin_timestamp = timers.timestamp()
-        self.__begun = True
-
-    def record_event(self, label, data=None):
-        self.__events.append((label, data, self.__lap_timer.lap()))
-
-    def end(self):
-        if self.__ended or not self.__begun: return
-
-        self.record_event('end')
-        self.__end_timestamp = timers.timestamp()
-        self.__ended = True
-
-        workdays = self.__persistance_dir.load_dict('workdata', 'workday')
-
-        if workdays != None:
-            workdays.append(data)
-
-        else: workdays = [data]
-
-        self.__persistance_dir.save_dict('workdata', 'workday', workdays)
-
-    def load(self, index=None):
-
-        workday = self.__persistance_dir.load_dict('workdata', 'workday')
-
-        if workday != None:
-
-            if index == None: data = workday
-
-            elif len(workday) > index: data = workday[index]
-
-            else: data = None
-
-            return data
 
 class AppMonitorData:
     def __init__(self):
