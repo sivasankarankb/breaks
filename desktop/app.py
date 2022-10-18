@@ -2,7 +2,7 @@
 
 # app.py - What ties it all together.
 
-from main_window import MainWindow
+import main_window
 import toolbar
 import work_timer
 import doing_now
@@ -10,7 +10,7 @@ import ui
 import logic
 
 if __name__ == '__main__':
-    main_window = MainWindow()
+    main_window = main_window.MainWindow()
     master = main_window.get_nesting_window()
 
     toolbar = toolbar.Toolbar(
