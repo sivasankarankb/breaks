@@ -2,11 +2,12 @@
 
 # app.py - What ties it all together.
 
+from main_window import MainWindow
 import ui
 import logic
 
 if __name__ == '__main__':
-    main_window = ui.MainWindow()
+    main_window = MainWindow()
     master = main_window.get_nesting_window()
 
     toolbar = ui.Toolbar(
