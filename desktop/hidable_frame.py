@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-class GridPlaceable:
+class HidableFrame:
     def __init__(self, master = None, row=None, column=None, expand=None):
         params = {}
         if row != None: params['row'] = row

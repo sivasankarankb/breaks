@@ -1,9 +1,9 @@
 from tkinter import ttk
 
 import config
-from ui import GridPlaceable
+from hidable_frame import HidableFrame
 
-class AboutBox(GridPlaceable):
+class AboutBox(HidableFrame):
     def initialise(self, frame):
         iframe = ttk.Frame(frame)
         iframe.grid()

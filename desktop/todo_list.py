@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 
-from ui import GridPlaceable
+from hidable_frame import HidableFrame
 
-class ToDoList(GridPlaceable):
+class ToDoList(HidableFrame):
     def initialise(self, frame):
         self.__tasks = {}
         self.__create_widgets(frame)

@@ -6,7 +6,7 @@ import timers
 import settings
 
 from notifier import Notifier
-from ui import GridPlaceable
+from hidable_frame import HidableFrame
 
 class WorkTimer:
     def __init__(self, ui):
@@ -72,7 +72,7 @@ class WorkTimer:
     def cleanup(self): pass
 
 
-class WorkTimerUI(GridPlaceable):
+class WorkTimerUI(HidableFrame):
     def initialise(self, frame): self.__create_widgets(frame)
 
     def __create_widgets(self, frame):

@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 
-from ui import GridPlaceable
+from hidable_frame import HidableFrame
 
-class DoingNow(GridPlaceable):
+class DoingNow(HidableFrame):
     def initialise(self, frame): self.__create_widgets(frame)
 
     def __create_widgets(self, frame):

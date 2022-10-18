@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
 
-from ui import GridPlaceable
+from hidable_frame import HidableFrame
 
-class Toolbar(GridPlaceable):
+class Toolbar(HidableFrame):
     def __init__(self, *args, button_labels=None, button_icons=None, **kwargs):
         self.__button_labels = button_labels
         self.__button_icons = button_icons
         self.__buttons = {}
-        GridPlaceable.__init__(self, *args, **kwargs)
+        HidableFrame.__init__(self, *args, **kwargs)
         
     def initialise(self, frame):
         if self.__button_labels == None: return

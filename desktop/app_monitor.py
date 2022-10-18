@@ -9,7 +9,7 @@ import timers
 import persistance
 
 from notifier import Notifier
-from ui import GridPlaceable
+from hidable_frame import HidableFrame
 
 class AppMonitor:
     def __init__(self, ui):
@@ -203,7 +203,7 @@ class AppMonitor:
             
         pers.save(data)
 
-class AppMonitorUI(GridPlaceable):
+class AppMonitorUI(HidableFrame):
     def initialise(self, frame):
         self.__container = ttk.Frame(frame)
         self.__container.grid(column=0, columnspan=2, pady=(0,16))        
