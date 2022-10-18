@@ -1,6 +1,3 @@
-
-# ui.py - (Graphical) User Interface stuff
-
 import tkinter as tk
 from tkinter import ttk
 
