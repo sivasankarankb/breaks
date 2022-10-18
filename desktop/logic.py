@@ -1,19 +1,14 @@
 
 # logic.py - Core logic
 
-import plyer
 import psutil
 import time
 import threading
 
 import timers
-import config
 import persistance
 
-class Notifier:
-    def notify(message):
-        plyer.notification.notify(title=config.app_name, message=message)
-
+from notifier import Notifier
 
 class AppMonitor:
     def __init__(self, ui):

@@ -5,6 +5,7 @@ from tkinter import ttk
 import timers
 import settings
 
+from notifier import Notifier
 from ui import GridPlaceable
 
 class WorkTimer:
