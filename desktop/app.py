@@ -5,6 +5,7 @@
 from main_window import MainWindow
 import toolbar
 import work_timer
+import doing_now
 import ui
 import logic
 
@@ -18,7 +19,7 @@ if __name__ == '__main__':
         master=master, row=0, column=0, expand='vertical'
     )
     
-    doing_now = ui.DoingNow(master=master, row=0, column=1, expand='both')
+    doing_now = doing_now.DoingNow(master=master, row=0, column=1, expand='both')
 
     work_timer_ui = work_timer.WorkTimerUI(master=master, column=1, expand='horizontal')
     work_timer_logic = work_timer.WorkTimer(work_timer_ui)
