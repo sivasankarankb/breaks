@@ -6,8 +6,8 @@ import ui
 import logic
 
 if __name__ == '__main__':
-    app_ui = ui.App()
-    master = app_ui.get_nesting_window()
+    main_window = ui.MainWindow()
+    master = main_window.get_nesting_window()
 
     toolbar = ui.Toolbar(
         button_labels=['Home', 'To do', 'App Monitor', 'About'],
@@ -77,6 +77,6 @@ if __name__ == '__main__':
     toolbar.set_listener('App Monitor', ui_state_monitor)
     toolbar.set_listener('About', ui_state_about)
 
-    app_ui.start()
+    main_window.start()
     work_timer_logic.cleanup()
     app_monitor.cleanup()

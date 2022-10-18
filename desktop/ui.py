@@ -10,7 +10,7 @@ import persistance
 
 import psutil
 
-class App:
+class MainWindow:
     def __setup_window(self):
         self.__tk.minsize(width = 600, height = 450)
         self.__tk.rowconfigure(0, weight = 1)
