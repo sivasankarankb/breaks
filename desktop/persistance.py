@@ -1,7 +1,6 @@
 
 # persistance.py - Saves and loads application data
 
-import timers
 import shelve
 import pathlib
 
