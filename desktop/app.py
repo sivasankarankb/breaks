@@ -32,7 +32,6 @@ if __name__ == '__main__':
     )
 
     app_monitor_inst = app_monitor.AppMonitor(app_monitor_ui)
-    app_monitor_inst.set_app_list_class(app_monitor.AppListUI, (master,))
     app_monitor_inst.set_app_edit_class(app_monitor.AppEditUI, (master,))
 
     about_box = about_box.AboutBox(

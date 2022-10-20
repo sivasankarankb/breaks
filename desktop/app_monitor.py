@@ -21,8 +21,6 @@ class AppMonitor:
         ui.set_remove_listener(self.__remove_app)
         
         self.__ui = ui
-        self.__list_class = None
-        self.__list_class_params = ()
 
         self.__monlist = {}
         self.__monlist_lock = threading.Lock()        
@@ -120,10 +118,8 @@ class AppMonitor:
         self.__monlist_lock.release()
         
     def __add_app(self):
-        if self.__list_class == None: return
-
-        dialog = self.__list_class(*self.__list_class_params)
-        dialog.set_ok_listener(self.__add_ok)
+        self.__ui.show_app_list()
+        self.__ui.set_app_list_ok_listener(self.__add_ok)
 
     def __autorefresh_task(self):
         if not self.__autorefresh_on: return
@@ -178,10 +174,6 @@ class AppMonitor:
             self.__monlist.pop(selection, None)
             if len(self.__monlist) == 0: self.__end_autorefresh()
         self.__refresh_tasks()
-
-    def set_app_list_class(self, list_class, params=()):
-        self.__list_class = list_class
-        self.__list_class_params = params
 
     def set_app_edit_class(self, edit_class, params=()):
         self.__app_edit_class = edit_class
@@ -242,6 +234,9 @@ class AppMonitorUI(HidableFrame):
 
         self.__app_list_iids = []
 
+        self.__app_list_dlg = None
+        self.__app_list_ok_listener = None
+
     def set_add_listener(self, listener=None):
         self.__add_button.configure(command=listener)
 
@@ -295,6 +290,21 @@ class AppMonitorUI(HidableFrame):
     
     def __remove_click(self):
         self.__selection_listener(self.__remove_button_listener)
+
+    def show_app_list(self):
+        self.__app_list_dlg = AppListUI(self.__container)
+
+    def set_app_list_ok_listener(self, listener):
+        if self.__app_list_dlg != None:
+            self.__app_list_dlg.set_ok_listener(self.__handle_app_list_ok)
+            self.__app_list_ok_listener = listener
+
+    def __handle_app_list_ok(self, *args, **kwargs):
+        if self.__app_list_ok_listener != None:
+            self.__app_list_ok_listener(*args, **kwargs)
+
+        self.__app_list_dlg = None
+        self.__app_list_ok_listener = None
 
 class AppListUI:
     def __refresh_list(self):
