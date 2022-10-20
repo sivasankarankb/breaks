@@ -23,10 +23,7 @@ class AppMonitor:
         self.__ui = ui
 
         self.__monlist = {}
-        self.__monlist_lock = threading.Lock()        
-        
-        self.__app_edit_class = None
-        self.__app_edit_class_params = ()
+        self.__monlist_lock = threading.Lock()
 
         self.__autorefresh_on = False
         self.__autorefresh_interval = 60 # seconds
@@ -152,15 +149,12 @@ class AppMonitor:
             self.__begin_autorefresh()
 
     def __edit_app(self, selection):
-        if self.__app_edit_class == None: return
-
-        dialog = self.__app_edit_class(*self.__app_edit_class_params)
-        dialog.set_ok_listener(self.__edit_ok)
-
-        dialog.set_default_values(
+        self.__ui.show_edit_app(
             self.__monlist[selection]['name'],
             self.__monlist[selection]['limit'], selection
         )
+
+        self.__ui.set_edit_app_ok_listener(self.__edit_ok)
 
     def __edit_ok(self, name, limit, selection):
         with self.__monlist_lock:
@@ -174,10 +168,6 @@ class AppMonitor:
             self.__monlist.pop(selection, None)
             if len(self.__monlist) == 0: self.__end_autorefresh()
         self.__refresh_tasks()
-
-    def set_app_edit_class(self, edit_class, params=()):
-        self.__app_edit_class = edit_class
-        self.__app_edit_class_params = params
 
     def cleanup(self):
         self.__end_autorefresh()
@@ -236,6 +226,9 @@ class AppMonitorUI(HidableFrame):
 
         self.__app_list_dlg = None
         self.__app_list_ok_listener = None
+
+        self.__edit_app_dlg = None
+        self.__edit_app_ok_listener = None
 
     def set_add_listener(self, listener=None):
         self.__add_button.configure(command=listener)
@@ -305,6 +298,22 @@ class AppMonitorUI(HidableFrame):
 
         self.__app_list_dlg = None
         self.__app_list_ok_listener = None
+
+    def show_edit_app(self, *defaults):
+        self.__edit_app_dlg = AppEditUI(self.__container)
+        self.__edit_app_dlg.set_default_values(*defaults)
+
+    def set_edit_app_ok_listener(self, listener):
+        if self.__edit_app_dlg != None:
+            self.__edit_app_dlg.set_ok_listener(self.__handle_edit_app_ok)
+            self.__edit_app_ok_listener = listener
+
+    def __handle_edit_app_ok(self, *args, **kwargs):
+        if self.__edit_app_ok_listener != None:
+            self.__edit_app_ok_listener(*args, **kwargs)
+
+        self.__edit_app_dlg = None
+        self.__edit_app_ok_listener = None
 
 class AppListUI:
     def __refresh_list(self):
