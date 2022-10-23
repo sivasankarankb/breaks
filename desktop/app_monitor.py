@@ -9,7 +9,6 @@ import timers
 import persistance
 
 from notifier import Notifier
-from hidable_frame import HidableFrame
 
 class AppMonitor:
     def __init__(self, ui):
@@ -185,9 +184,9 @@ class AppMonitor:
             
         pers.save(data)
 
-class AppMonitorUI(HidableFrame):
-    def initialise(self, frame):
-        self.__container = ttk.Frame(frame)
+class AppMonitorUI:
+    def __init__(self, master):
+        self.__container = ttk.Frame(master)
         self.__container.grid(column=0, columnspan=2, pady=(0,16))        
         
         self.__add_button = ttk.Button(self.__container, text='Add')
@@ -207,20 +206,20 @@ class AppMonitorUI(HidableFrame):
         self.__remove_button.grid(row=0, column=2)
         self.__remove_button_listener = None
 
-        self.__app_list = ttk.Treeview(frame, height=8)
+        self.__app_list = ttk.Treeview(master, height=8)
         self.__app_list.grid(row=1, padx=(0,8), sticky=tk.NSEW)
 
         self.__list_scroller = ttk.Scrollbar(
-            frame, command=self.__app_list.yview, orient='vertical'
+            master, command=self.__app_list.yview, orient='vertical'
         )
 
         self.__list_scroller.grid(row=1, column=1, sticky=tk.NS)
 
         self.__app_list.configure(yscrollcommand=self.__list_scroller.set)
 
-        frame.columnconfigure(0, weight=1)
-        frame.rowconfigure(1, weight=1)
-        frame.grid_configure(pady=(0,16))
+        master.columnconfigure(0, weight=1)
+        master.rowconfigure(1, weight=1)
+        master.grid_configure(pady=(0,16))
 
         self.__app_list_iids = []
 

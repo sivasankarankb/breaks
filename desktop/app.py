@@ -49,10 +49,9 @@ if __name__ == '__main__':
     todo_container.grid(sticky=tk.NSEW, pady=(0,16), row=0, column=1)
     to_do_list = todo_list.ToDoList(master=todo_container)
 
-    app_monitor_ui = app_monitor.AppMonitorUI(
-        master=master, row=0, column=1, expand='both'
-    )
-
+    app_monitor_container = ttk.Frame(master)
+    app_monitor_container.grid(sticky=tk.NSEW, pady=(0,16), row=0, column=1)
+    app_monitor_ui = app_monitor.AppMonitorUI(master=app_monitor_container)
     app_monitor_inst = app_monitor.AppMonitor(app_monitor_ui)
 
     about_box = about_box.AboutBox(
@@ -61,38 +60,38 @@ if __name__ == '__main__':
 
     def ui_state_home():
         global home_container
-        global todo_container, app_monitor_ui, about_box
+        global todo_container, app_monitor_container, about_box
         
         home_container.grid()
         todo_container.grid_remove()
-        app_monitor_ui.hide()
+        app_monitor_container.grid_remove()
         about_box.hide()
 
     def ui_state_todo():
         global home_container
-        global todo_container, app_monitor_ui, about_box
+        global todo_container, app_monitor_container, about_box
         
         home_container.grid_remove()
         todo_container.grid()
-        app_monitor_ui.hide()
+        app_monitor_container.grid_remove()
         about_box.hide()
 
     def ui_state_monitor():
         global home_container
-        global todo_container, app_monitor_ui, about_box
+        global todo_container, app_monitor_container, about_box
         
         home_container.grid_remove()
         todo_container.grid_remove()
-        app_monitor_ui.show()
+        app_monitor_container.grid()
         about_box.hide()
 
     def ui_state_about():
         global home_container
-        global todo_container, app_monitor_ui, about_box
+        global todo_container, app_monitor_container, about_box
         
         home_container.grid_remove()
         todo_container.grid_remove()
-        app_monitor_ui.hide()
+        app_monitor_container.grid_remove()
         about_box.show()
 
     ui_state_home()
