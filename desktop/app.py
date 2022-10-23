@@ -16,6 +16,8 @@ import about_box
 if __name__ == '__main__':
     main_window = main_window.MainWindow()
     master = main_window.get_nesting_window()
+    master.rowconfigure(0, weight=1)
+    master.columnconfigure(1, weight=1)
 
     toolbar_container = ttk.Frame(master)
 
@@ -29,8 +31,6 @@ if __name__ == '__main__':
         button_icons=['home', 'notes', 'screen', 'info'],
     )
 
-    master.rowconfigure(0, weight=1)
-
     home_container = ttk.Frame(master)
     home_container.grid(sticky=tk.NSEW, row=0, column=1)
     home_container.rowconfigure(0, weight=1)
@@ -39,8 +39,6 @@ if __name__ == '__main__':
     doing_now_container = ttk.Frame(home_container)
 
     doing_now_container.grid(sticky=tk.NSEW, pady=(0,16), row=0, column=0)
-
-    master.columnconfigure(1, weight=1)
 
     doing_now = doing_now.DoingNow(master=doing_now_container)
 
