@@ -8,8 +8,6 @@ class Toolbar:
         self.__button_labels = button_labels
         self.__button_icons = button_icons
         self.__buttons = {}
-
-        self.__master = master
         
         if self.__button_labels == None: return
 
@@ -29,7 +27,7 @@ class Toolbar:
                 except: pass
 
 
-            button = ttk.Button(self.__master, text=text, image=image)
+            button = ttk.Button(master, text=text, image=image)
             button.grid(pady=(0,8))
             self.__buttons[text] = button
             index += 1
