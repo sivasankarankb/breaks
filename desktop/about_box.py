@@ -16,7 +16,7 @@ class AboutBox:
         l2 = ttk.Label(frame, text='Version ' + config.app_version)
         l2.grid(pady=(0,8))
 
-        l3 = ttk.Label(frame, text='https://githhub.com/sivasankarankb/breaks')
+        l3 = ttk.Label(frame, text='https://github.com/sivasankarankb/breaks')
         l3.grid(pady=(0,8))
 
         lcopy = ttk.Label(frame, text='Copyright (C) 2020-2022 Sivasankaran K B')
