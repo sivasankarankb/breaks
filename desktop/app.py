@@ -54,45 +54,45 @@ if __name__ == '__main__':
     app_monitor_ui = app_monitor.AppMonitorUI(master=app_monitor_container)
     app_monitor_inst = app_monitor.AppMonitor(app_monitor_ui)
 
-    about_box = about_box.AboutBox(
-        master=master, row=0, column=1, expand='both'
-    )
+    about_box_container = ttk.Frame(master)
+    about_box_container.grid(sticky=tk.NSEW, pady=(0,16), row=0, column=1)
+    about_box = about_box.AboutBox(master=about_box_container)
 
     def ui_state_home():
         global home_container
-        global todo_container, app_monitor_container, about_box
+        global todo_container, app_monitor_container, about_box_container
         
         home_container.grid()
         todo_container.grid_remove()
         app_monitor_container.grid_remove()
-        about_box.hide()
+        about_box_container.grid_remove()
 
     def ui_state_todo():
         global home_container
-        global todo_container, app_monitor_container, about_box
+        global todo_container, app_monitor_container, about_box_container
         
         home_container.grid_remove()
         todo_container.grid()
         app_monitor_container.grid_remove()
-        about_box.hide()
+        about_box_container.grid_remove()
 
     def ui_state_monitor():
         global home_container
-        global todo_container, app_monitor_container, about_box
+        global todo_container, app_monitor_container, about_box_container
         
         home_container.grid_remove()
         todo_container.grid_remove()
         app_monitor_container.grid()
-        about_box.hide()
+        about_box_container.grid_remove()
 
     def ui_state_about():
         global home_container
-        global todo_container, app_monitor_container, about_box
+        global todo_container, app_monitor_container, about_box_container
         
         home_container.grid_remove()
         todo_container.grid_remove()
         app_monitor_container.grid_remove()
-        about_box.show()
+        about_box_container.grid()
 
     ui_state_home()
 
