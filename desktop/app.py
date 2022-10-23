@@ -2,6 +2,9 @@
 
 # app.py - What ties it all together.
 
+import tkinter as tk
+from tkinter import ttk
+
 import main_window
 import toolbar
 import work_timer
@@ -14,11 +17,19 @@ if __name__ == '__main__':
     main_window = main_window.MainWindow()
     master = main_window.get_nesting_window()
 
+    toolbar_container = ttk.Frame(master)
+
+    toolbar_container.grid(
+        sticky=tk.NSEW, pady=(0,16), padx=(0,16), row=0, column=0
+    )
+    
     toolbar = toolbar.Toolbar(
+        master=toolbar_container,
         button_labels=['Home', 'To do', 'App Monitor', 'About'],
         button_icons=['home', 'notes', 'screen', 'info'],
-        master=master, row=0, column=0, expand='vertical'
     )
+
+    master.rowconfigure(0, weight=1)
     
     doing_now = doing_now.DoingNow(master=master, row=0, column=1, expand='both')
 
