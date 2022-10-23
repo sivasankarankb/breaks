@@ -6,7 +6,6 @@ import timers
 import settings
 
 from notifier import Notifier
-from hidable_frame import HidableFrame
 
 class WorkTimer:
     def __init__(self, ui):
@@ -72,17 +71,13 @@ class WorkTimer:
     def cleanup(self): pass
 
 
-class WorkTimerUI(HidableFrame):
-    def initialise(self, frame): self.__create_widgets(frame)
+class WorkTimerUI:
+    def __init__(self, master):
+        frame = ttk.Frame(master, padding=8, borderwidth=1, relief='solid')
+        frame.grid(sticky=tk.NSEW)
 
-    def __create_widgets(self, frame):
-        iframe = ttk.Frame(frame, padding=8, borderwidth=1, relief='solid')
-        iframe.grid(sticky=tk.NSEW)
-
-        frame.rowconfigure(0, weight=1)
-        frame.columnconfigure(0, weight=1)
-
-        frame = iframe
+        master.rowconfigure(0, weight=1)
+        master.columnconfigure(0, weight=1)
 
         self.__timer_time = ttk.Label(frame)
         self.__timer_time.grid(row=0, column=0)
