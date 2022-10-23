@@ -119,14 +119,6 @@ class MainWindow:
 
     def start(self): self.__tk.mainloop()
 
-    def get_nesting_window(self): return self.__outer_frame
-
-    def minimise_main_window(self): self.__tk.iconify()
-
-    def hide_main_window(self): self.__tk.withdraw()
-
-    def show_main_window(self): self.__tk.deiconify()
-
     def __exit(self): self.__tk.destroy()
 
     def get_work_timer_ui(self): return self.__work_timer_ui
