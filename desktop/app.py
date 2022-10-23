@@ -37,15 +37,11 @@ if __name__ == '__main__':
     home_container.columnconfigure(0, weight=1)
     
     doing_now_container = ttk.Frame(home_container)
-
     doing_now_container.grid(sticky=tk.NSEW, pady=(0,16), row=0, column=0)
-
     doing_now = doing_now.DoingNow(master=doing_now_container)
 
     work_timer_container = ttk.Frame(home_container)
-
     work_timer_container.grid(sticky=tk.NSEW, pady=(0,16), row=1, column=0)
-    
     work_timer_ui = work_timer.WorkTimerUI(master=work_timer_container)
     work_timer_logic = work_timer.WorkTimer(work_timer_ui)
     
