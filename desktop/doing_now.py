@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 
-from hidable_frame import HidableFrame
-
 class DoingNow:
     def __init__(self, master):
         self.__doing_now_label = ttk.Label(master, text='Doing now:')

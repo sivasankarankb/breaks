@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 
-from hidable_frame import HidableFrame
-
 class Toolbar:
     def __init__(self, master, button_labels=None, button_icons=None):
         self.__button_labels = button_labels
