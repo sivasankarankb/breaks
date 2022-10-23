@@ -31,7 +31,13 @@ if __name__ == '__main__':
 
     master.rowconfigure(0, weight=1)
     
-    doing_now = doing_now.DoingNow(master=master, row=0, column=1, expand='both')
+    doing_now_container = ttk.Frame(master)
+
+    doing_now_container.grid(sticky=tk.NSEW, pady=(0,16), row=0, column=1)
+
+    master.columnconfigure(1, weight=1)
+
+    doing_now = doing_now.DoingNow(master=doing_now_container)
 
     work_timer_ui = work_timer.WorkTimerUI(master=master, column=1, expand='horizontal')
     work_timer_logic = work_timer.WorkTimer(work_timer_ui)
@@ -49,36 +55,40 @@ if __name__ == '__main__':
     )
 
     def ui_state_home():
-        global doing_now, work_timer_ui, to_do_list, app_monitor_ui, about_box
+        global doing_now_container
+        global work_timer_ui, to_do_list, app_monitor_ui, about_box
         
-        doing_now.show()
+        doing_now_container.grid()
         work_timer_ui.show()
         to_do_list.hide()
         app_monitor_ui.hide()
         about_box.hide()
 
     def ui_state_todo():
-        global doing_now, work_timer_ui, to_do_list, app_monitor_ui, about_box
+        global doing_now_container
+        global work_timer_ui, to_do_list, app_monitor_ui, about_box
         
-        doing_now.hide()
+        doing_now_container.grid_remove()
         work_timer_ui.hide()
         to_do_list.show()
         app_monitor_ui.hide()
         about_box.hide()
 
     def ui_state_monitor():
-        global doing_now, work_timer_ui, to_do_list, app_monitor_ui, about_box
+        global doing_now_container
+        global work_timer_ui, to_do_list, app_monitor_ui, about_box
         
-        doing_now.hide()
+        doing_now_container.grid_remove()
         work_timer_ui.hide()
         to_do_list.hide()
         app_monitor_ui.show()
         about_box.hide()
 
     def ui_state_about():
-        global doing_now, work_timer_ui, to_do_list, app_monitor_ui, about_box
+        global doing_now_container
+        global work_timer_ui, to_do_list, app_monitor_ui, about_box
         
-        doing_now.hide()
+        doing_now_container.grid_remove()
         work_timer_ui.hide()
         to_do_list.hide()
         app_monitor_ui.hide()
