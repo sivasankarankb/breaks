@@ -45,7 +45,9 @@ if __name__ == '__main__':
     work_timer_ui = work_timer.WorkTimerUI(master=work_timer_container)
     work_timer_logic = work_timer.WorkTimer(work_timer_ui)
     
-    to_do_list = todo_list.ToDoList(master=master, row=0, column=1, expand='both')
+    todo_container = ttk.Frame(master)
+    todo_container.grid(sticky=tk.NSEW, pady=(0,16), row=0, column=1)
+    to_do_list = todo_list.ToDoList(master=todo_container)
 
     app_monitor_ui = app_monitor.AppMonitorUI(
         master=master, row=0, column=1, expand='both'
@@ -59,37 +61,37 @@ if __name__ == '__main__':
 
     def ui_state_home():
         global home_container
-        global to_do_list, app_monitor_ui, about_box
+        global todo_container, app_monitor_ui, about_box
         
         home_container.grid()
-        to_do_list.hide()
+        todo_container.grid_remove()
         app_monitor_ui.hide()
         about_box.hide()
 
     def ui_state_todo():
         global home_container
-        global to_do_list, app_monitor_ui, about_box
+        global todo_container, app_monitor_ui, about_box
         
         home_container.grid_remove()
-        to_do_list.show()
+        todo_container.grid()
         app_monitor_ui.hide()
         about_box.hide()
 
     def ui_state_monitor():
         global home_container
-        global to_do_list, app_monitor_ui, about_box
+        global todo_container, app_monitor_ui, about_box
         
         home_container.grid_remove()
-        to_do_list.hide()
+        todo_container.grid_remove()
         app_monitor_ui.show()
         about_box.hide()
 
     def ui_state_about():
         global home_container
-        global to_do_list, app_monitor_ui, about_box
+        global todo_container, app_monitor_ui, about_box
         
         home_container.grid_remove()
-        to_do_list.hide()
+        todo_container.grid_remove()
         app_monitor_ui.hide()
         about_box.show()
 
