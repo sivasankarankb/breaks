@@ -2,9 +2,6 @@
 
 # app.py - What ties it all together.
 
-import tkinter as tk
-from tkinter import ttk
-
 import main_window
 import work_timer
 import app_monitor
