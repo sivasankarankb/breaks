@@ -5,25 +5,25 @@ class ToDoList:
     def __init__(self, master):
         self.__tasks = {}
 
-        self.__todo_list_top_frame = ttk.Frame(master)
+        todo_list_top_frame = ttk.Frame(master)
 
-        self.__todo_list_top_frame.grid(
+        todo_list_top_frame.grid(
             row=0, column=0, sticky=tk.NSEW, padx=(0,8), pady=(0,8)
         )
 
-        self.__todo_list_label = ttk.Label(
-            self.__todo_list_top_frame, text='To do:'
+        todo_list_label = ttk.Label(
+            todo_list_top_frame, text='To do:'
         )
 
-        self.__todo_list_label.grid(row=0, column=0, sticky=tk.W, padx=(0,8))
+        todo_list_label.grid(row=0, column=0, sticky=tk.W, padx=(0,8))
 
-        self.__todo_clear = ttk.Button(
-            self.__todo_list_top_frame, text='Clear', command=self.__list_clear
+        todo_clear = ttk.Button(
+            todo_list_top_frame, text='Clear', command=self.__list_clear
         )
 
-        self.__todo_clear.grid(row=0, column=1)
+        todo_clear.grid(row=0, column=1)
 
-        self.__todo_list_top_frame.columnconfigure(0, weight=1)
+        todo_list_top_frame.columnconfigure(0, weight=1)
 
         self.__todo_list = ttk.Treeview(master, show='tree', height=12)
         self.__todo_list.grid(
@@ -32,24 +32,24 @@ class ToDoList:
 
         self.__todo_list.bind('<<TreeviewSelect>>', self.__show_selection)
 
-        self.__todo_list_scroll = ttk.Scrollbar(
+        todo_list_scroll = ttk.Scrollbar(
             master, command=self.__todo_list.yview, orient='vertical'
         )
 
-        self.__todo_list_scroll.grid(
+        todo_list_scroll.grid(
             row=1, column=1, rowspan=3, sticky=tk.NS, padx=(0,8), pady=(0,8)
         )
 
-        self.__todo_list.configure(yscrollcommand=self.__todo_list_scroll.set)
+        self.__todo_list.configure(yscrollcommand=todo_list_scroll.set)
 
-        self.__todo_task_label = ttk.Label(master, text='Task')
-        self.__todo_task_label.grid(row=0, column=2, pady=(0,8), sticky=tk.W)
+        todo_task_label = ttk.Label(master, text='Task')
+        todo_task_label.grid(row=0, column=2, pady=(0,8), sticky=tk.W)
 
         self.__todo_task = ttk.Entry(master)
         self.__todo_task.grid(row=1, column=2, sticky=tk.EW, pady=(0,8))
 
-        self.__todo_desc_label = ttk.Label(master, text='Description')
-        self.__todo_desc_label.grid(row=2, column=2, pady=(0,8), sticky=tk.W)
+        todo_desc_label = ttk.Label(master, text='Description')
+        todo_desc_label.grid(row=2, column=2, pady=(0,8), sticky=tk.W)
 
         self.__todo_description = tk.Text(
             master, width=40, height=10, wrap='word', padx=4, pady=4
@@ -62,17 +62,17 @@ class ToDoList:
         self.__todo_list_bot_frame = ttk.Frame(master)
         self.__todo_list_bot_frame.grid(row=4, column=0, sticky=tk.NSEW)
 
-        self.__todo_add = ttk.Button(
+        todo_add = ttk.Button(
             self.__todo_list_bot_frame, text='Add', command=self.__list_add
         )
 
-        self.__todo_add.grid(row=0, column=0, sticky=tk.E, padx=(0,4))
+        todo_add.grid(row=0, column=0, sticky=tk.E, padx=(0,4))
 
-        self.__todo_rem = ttk.Button(
+        todo_rem = ttk.Button(
             self.__todo_list_bot_frame, text='Remove', command=self.__list_rem
         )
 
-        self.__todo_rem.grid(row=0, column=1, sticky=tk.W, padx=(4,0))
+        todo_rem.grid(row=0, column=1, sticky=tk.W, padx=(4,0))
 
         self.__todo_list_bot_frame.columnconfigure(0, weight=1)
         self.__todo_list_bot_frame.columnconfigure(1, weight=1)
@@ -80,17 +80,17 @@ class ToDoList:
         self.__todo_task_bot_frame = ttk.Frame(master)
         self.__todo_task_bot_frame.grid(row=4, column=2, sticky=tk.NSEW)
 
-        self.__todo_task_ok = ttk.Button(
+        todo_task_ok = ttk.Button(
             self.__todo_task_bot_frame, text='Ok', command=self.__add_ok
         )
 
-        self.__todo_task_ok.grid(row=0, column=0, sticky=tk.E, padx=(0,4))
+        todo_task_ok.grid(row=0, column=0, sticky=tk.E, padx=(0,4))
 
-        self.__todo_task_cancel = ttk.Button(
+        todo_task_cancel = ttk.Button(
             self.__todo_task_bot_frame, text='Cancel', command=self.__add_cancel
         )
 
-        self.__todo_task_cancel.grid(row=0, column=1, sticky=tk.W, padx=(4,0))
+        todo_task_cancel.grid(row=0, column=1, sticky=tk.W, padx=(4,0))
 
         self.__todo_task_bot_frame.columnconfigure(0, weight=1)
         self.__todo_task_bot_frame.columnconfigure(1, weight=1)
