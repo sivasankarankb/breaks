@@ -3,9 +3,8 @@ import threading
 import psutil
 
 import timers
-import persistance
-
 from notifier import Notifier
+from .storage import AppMonitorData
 
 class AppMonitor:
     def __init__(self, ui):
@@ -24,8 +23,8 @@ class AppMonitor:
         self.__autorefresh_on = False
         self.__autorefresh_interval = 60 # seconds
 
-        pers = persistance.AppMonitorData()
-        data = pers.load() # Load monitoring list, if any.
+        storage = AppMonitorData()
+        data = storage.load() # Load monitoring list, if any.
 
         if data != None:
             self.__monlist = data
@@ -168,7 +167,7 @@ class AppMonitor:
     def cleanup(self):
         self.__end_autorefresh()
         
-        pers = persistance.AppMonitorData()
+        storage = AppMonitorData()
 
         data = {}
         ml = self.__monlist
@@ -179,4 +178,4 @@ class AppMonitor:
                 'duration': 0
             }
             
-        pers.save(data)
+        storage.save(data)
