@@ -5,8 +5,6 @@ import threading
 import time
 import math
 
-def timestamp(): return time.strftime("%j%Y%H%M%S%z", time.localtime())
-
 class Indeterminate:
     def __init__(self, progress, granularity=60.0):
         self.__progress_callback = progress
