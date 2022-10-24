@@ -3,7 +3,7 @@ import tkinter.simpledialog as tkdlg
 from tkinter import ttk
 
 import timers
-import settings
+import config
 
 from notifier import Notifier
 
@@ -27,7 +27,7 @@ class WorkTimer:
             self.__ui.set_timer_button_text('Take a break.')
 
             self.__countdown_timer = timers.Countdown(
-                settings.work_period, self.__timer_done
+                config.work_period, self.__timer_done
             )
 
             self.__countdown_timer.set_progress_callback(self.__timer_update)
@@ -38,7 +38,7 @@ class WorkTimer:
             self.__ui.set_timer_button_text('Take a break.')
 
             self.__countdown_timer = timers.Countdown(
-                settings.work_period, self.__timer_done
+                config.work_period, self.__timer_done
             )
 
             self.__countdown_timer.set_progress_callback(self.__timer_update)
@@ -56,9 +56,9 @@ class WorkTimer:
             self.__timer_button_state = 'begin'
 
     def __timer_set_button_listener(self):
-        dur = self.__ui.get_integer("Timer interval in minutes:", int(settings.work_period//60))
+        dur = self.__ui.get_integer("Timer interval in minutes:", int(config.work_period//60))
 
-        if dur != None and dur > 0: settings.work_period = dur * 60
+        if dur != None and dur > 0: config.work_period = dur * 60
 
     def __timer_done(self):
         self.__ui.set_time_text('Done')
