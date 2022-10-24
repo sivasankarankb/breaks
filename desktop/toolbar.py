@@ -2,31 +2,20 @@ import tkinter as tk
 from tkinter import ttk
 
 class Toolbar:
-    def __init__(self, master, button_labels=None, button_icons=None):
+    def __init__(self, master, button_labels, button_icons):
         self.__buttons = {}
-        
-        if button_labels == None: return
-
-        index=0
         self.__icons = []
         
-        for text in button_labels:
-            image = None
+        for label, icon in zip(button_labels, button_icons):
+            try:
+                image = tk.PhotoImage(file='icons/' + icon + '.png')
+                self.__icons.append(image) # Save reference, else GC'd
             
-            if button_icons != None:
-                name = button_icons[index]
-                path = 'icons/' + name + '.png'
-                
-                try:
-                    image = tk.PhotoImage(file=path)
-                    self.__icons.append(image) # Save reference, else GC'd
-                except: pass
+            except: image = None
 
-
-            button = ttk.Button(master, text=text, image=image)
+            button = ttk.Button(master, text=label, image=image)
             button.grid(pady=(0,8))
-            self.__buttons[text] = button
-            index += 1
+            self.__buttons[label] = button
     
     def set_listener(self, button, listener):
         if button in self.__buttons:
