@@ -31,13 +31,12 @@ class MainWindow:
 
         self.__tk.iconphoto(True, tk.PhotoImage(file='icons/icon.png'))
 
-        self.__outer_frame = ttk.Frame(self.__tk)
-        self.__outer_frame.grid(sticky=tk.NSEW, padx=16, pady=(16,0))
+        master = ttk.Frame(self.__tk)
+        master.grid(sticky=tk.NSEW, padx=16, pady=(16,0))
 
         self.__setup_window()
         self.__setup_style()
 
-        master = self.__outer_frame
         master.rowconfigure(0, weight=1)
         master.columnconfigure(1, weight=1)
 
