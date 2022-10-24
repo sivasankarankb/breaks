@@ -3,20 +3,18 @@ from tkinter import ttk
 
 class Toolbar:
     def __init__(self, master, button_labels=None, button_icons=None):
-        self.__button_labels = button_labels
-        self.__button_icons = button_icons
         self.__buttons = {}
         
-        if self.__button_labels == None: return
+        if button_labels == None: return
 
         index=0
         self.__icons = []
         
-        for text in self.__button_labels:
+        for text in button_labels:
             image = None
             
-            if self.__button_icons != None:
-                name = self.__button_icons[index]
+            if button_icons != None:
+                name = button_icons[index]
                 path = 'icons/' + name + '.png'
                 
                 try:
