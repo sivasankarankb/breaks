@@ -78,44 +78,41 @@ class MainWindow:
         about_box_container.grid(sticky=tk.NSEW, pady=(0,16), row=0, column=1)
         about_box_obj = about_box.AboutBox(master=about_box_container)
 
-        self.__home_container = home_container
-        self.__todo_container = todo_container
-        self.__app_monitor_container = app_monitor_container
-        self.__about_box_container = about_box_container
+        self.__panes = {}
+        self.__panes['home'] = home_container
+        self.__panes['todo'] = todo_container
+        self.__panes['app_monitor'] = app_monitor_container
+        self.__panes['about_box'] = about_box_container
+
         self.__work_timer_ui = work_timer_ui
         self.__app_monitor_ui = app_monitor_ui
         self.__toolbar = toolbar_obj # Obj not saved -> Toolbar icons GC'd 
 
-        self.__toolbar.set_listener('Home', self.__ui_state_home)
-        self.__toolbar.set_listener('To do', self.__ui_state_todo)
-        self.__toolbar.set_listener('App Monitor', self.__ui_state_monitor)
-        self.__toolbar.set_listener('About', self.__ui_state_about)
+        self.__toolbar.set_listener(
+            'Home', lambda: self.__show_pane('home')
+        )
+        
+        self.__toolbar.set_listener(
+            'To do', lambda: self.__show_pane('todo')
+        )
+        
+        self.__toolbar.set_listener(
+            'App Monitor', lambda: self.__show_pane('app_monitor')
+        )
 
-        self.__ui_state_home()
+        self.__toolbar.set_listener(
+            'About', lambda: self.__show_pane('about_box')
+        )
 
-    def __ui_state_home(self):
-        self.__home_container.grid()
-        self.__todo_container.grid_remove()
-        self.__app_monitor_container.grid_remove()
-        self.__about_box_container.grid_remove()
+        self.__show_pane('home')
 
-    def __ui_state_todo(self):
-        self.__home_container.grid_remove()
-        self.__todo_container.grid()
-        self.__app_monitor_container.grid_remove()
-        self.__about_box_container.grid_remove()
+    def __show_pane(self, pane):
+        if pane not in self.__panes: return
 
-    def __ui_state_monitor(self):
-        self.__home_container.grid_remove()
-        self.__todo_container.grid_remove()
-        self.__app_monitor_container.grid()
-        self.__about_box_container.grid_remove()
+        for pane_name in self.__panes:
+            if pane_name != pane: self.__panes[pane_name].grid_remove()
 
-    def __ui_state_about(self):
-        self.__home_container.grid_remove()
-        self.__todo_container.grid_remove()
-        self.__app_monitor_container.grid_remove()
-        self.__about_box_container.grid()
+        self.__panes[pane].grid()
 
     def start(self): self.__tk.mainloop()
 
