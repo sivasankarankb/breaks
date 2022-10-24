@@ -3,13 +3,14 @@
 
 import shelve
 import pathlib
+import config
 
 class PersistanceDir:
     def __init__(self):
         self.__persistance_dir = None
 
     def __create_persistance_dir(self):
-        dir = pathlib.Path("data")
+        dir = pathlib.Path(config.data_dir)
 
         if dir.exists() and not dir.is_dir(): dir.unlink()
 
