@@ -38,19 +38,19 @@ class AppListUI:
         self.__window.title('Select App')
         self.__window.minsize(width=480, height=450)
         
-        self.__container = ttk.Frame(self.__window)
-        self.__container.grid(
+        container = ttk.Frame(self.__window)
+        container.grid(
             row=0, column=0, sticky=tk.NSEW, padx=16, pady=16
         )
         
-        self.__message = ttk.Label(
-            self.__container, text='Select an app to add.'
+        message = ttk.Label(
+            container, text='Select an app to add.'
         )
         
-        self.__message.grid(pady=(0,8), sticky=tk.W)
+        message.grid(pady=(0,8), sticky=tk.W)
 
         self.__process_list = ttk.Treeview(
-            self.__container, height=16, columns=['path']
+            container, height=16, columns=['path']
         )
 
         self.__process_list.heading('#0', text='Application')
@@ -63,28 +63,28 @@ class AppListUI:
             row=1, column=0, pady=(0,8), sticky=tk.NSEW
         )
 
-        self.__list_scroll_right = ttk.Scrollbar(
-            self.__container, orient='vertical'
+        list_scroll_right = ttk.Scrollbar(
+            container, orient='vertical'
         )
 
-        self.__list_scroll_right.grid(
+        list_scroll_right.grid(
             row=1, column=1, pady=(0,8), sticky=tk.NS
         )
 
-        self.__process_list.configure(yscrollcommand=self.__list_scroll_right.set)
-        self.__list_scroll_right.configure(command=self.__process_list.yview)
+        self.__process_list.configure(yscrollcommand=list_scroll_right.set)
+        list_scroll_right.configure(command=self.__process_list.yview)
         
 
-        self.__ok_button = ttk.Button(
-            self.__container, text='Ok', command=self.__ok_click
+        ok_button = ttk.Button(
+            container, text='Ok', command=self.__ok_click
         )
 
-        self.__ok_button.grid(row=3, column=0, columnspan=2, sticky=tk.E)
+        ok_button.grid(row=3, column=0, columnspan=2, sticky=tk.E)
 
         self.__ok_button_listener = None
 
-        self.__container.rowconfigure(1, weight=1)
-        self.__container.columnconfigure(0, weight=1)
+        container.rowconfigure(1, weight=1)
+        container.columnconfigure(0, weight=1)
 
         self.__refresh_list()
 

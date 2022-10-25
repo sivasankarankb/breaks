@@ -12,30 +12,30 @@ class AppMonitorUI:
         self.__add_button = ttk.Button(self.__container, text='Add')
         self.__add_button.grid(row=0, column=0, padx=(0,8))
 
-        self.__edit_button = ttk.Button(
+        edit_button = ttk.Button(
             self.__container, text='Edit', command=self.__edit_click
         )
         
-        self.__edit_button.grid(row=0, column=1, padx=(0,8))
+        edit_button.grid(row=0, column=1, padx=(0,8))
         self.__edit_button_listener = None
 
-        self.__remove_button = ttk.Button(
+        remove_button = ttk.Button(
             self.__container, text='Remove', command=self.__remove_click
         )
         
-        self.__remove_button.grid(row=0, column=2)
+        remove_button.grid(row=0, column=2)
         self.__remove_button_listener = None
 
         self.__app_list = ttk.Treeview(master, height=8)
         self.__app_list.grid(row=1, padx=(0,8), sticky=tk.NSEW)
 
-        self.__list_scroller = ttk.Scrollbar(
+        list_scroller = ttk.Scrollbar(
             master, command=self.__app_list.yview, orient='vertical'
         )
 
-        self.__list_scroller.grid(row=1, column=1, sticky=tk.NS)
+        list_scroller.grid(row=1, column=1, sticky=tk.NS)
 
-        self.__app_list.configure(yscrollcommand=self.__list_scroller.set)
+        self.__app_list.configure(yscrollcommand=list_scroller.set)
 
         master.columnconfigure(0, weight=1)
         master.rowconfigure(1, weight=1)
