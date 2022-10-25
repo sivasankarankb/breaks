@@ -3,17 +3,17 @@ from tkinter import ttk
 
 class DoingNow:
     def __init__(self, master):
-        self.__doing_now_label = ttk.Label(master, text='Doing now:')
+        doing_now_label = ttk.Label(master, text='Doing now:')
 
-        self.__doing_now_label.grid(
+        doing_now_label.grid(
             row=0, column=0, sticky=tk.W, pady=(0,8)
         )
 
-        self.__clear_button = ttk.Button(
+        clear_button = ttk.Button(
             master, text='Clear', command=self.__clear_click
         )
 
-        self.__clear_button.grid(row=0, column=1, sticky=tk.E, pady=(0,8))
+        clear_button.grid(row=0, column=1, sticky=tk.E, pady=(0,8))
 
         self.__current_task = tk.Text(
             master, width=40, height=6, wrap='word', padx=4, pady=4
