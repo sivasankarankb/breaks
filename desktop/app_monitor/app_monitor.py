@@ -30,6 +30,8 @@ class AppMonitor:
             self.__monlist = data
             if len(data) > 0: self.__begin_autorefresh()
 
+        self.__notifier = Notifier()
+
     def __update_info(self, info):
         key = info['exe']
 
@@ -104,7 +106,7 @@ class AppMonitor:
                     duration = self.__monlist[info['exe']]['duration']
 
                     if limit != None and duration > limit:
-                        Notifier.notify(name + ' has exceeded it\'s time limit!\nPlease consider closing it.')
+                        self.__notifier.notify(name + ' has exceeded it\'s time limit!\nPlease consider closing it.')
 
         self.__render_list()
         self.__monlist_lock.release()

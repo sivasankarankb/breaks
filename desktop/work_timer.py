@@ -21,6 +21,7 @@ class WorkTimer:
         self.__ui.set_timer_button_listener(self.__timer_button_listener)
 
         self.__timer_button_state = 'init'
+        self.__notifier = Notifier()
 
     def __timer_button_listener(self):
         if self.__timer_button_state == 'init':
@@ -62,7 +63,7 @@ class WorkTimer:
 
     def __timer_done(self):
         self.__ui.set_time_text('Done')
-        Notifier.notify('Take a break.')
+        self.__notifier.notify('Take a break.')
 
     def __timer_update(self, seconds):
         minutes = seconds // 60
