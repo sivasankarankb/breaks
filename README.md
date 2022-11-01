@@ -16,7 +16,6 @@ To try Breaks:
    with `venv` and enter it.
 
 5. Get the packages required by Breaks by running
-   `pip3 install -r requirements.txt` inside the `desktop` directory from
-   a terminal.
+   `pip3 install -r requirements.txt` inside the code directory from a terminal.
 
 6. Finally, run the app with `python3 app.py`.
