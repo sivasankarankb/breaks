@@ -1,9 +1,10 @@
 import time
 import threading
-import psutil
 
 import timers
 from notifier import Notifier
+
+from .process_info import ProcessInfo
 from .storage import AppMonitorData
 
 class AppMonitor:
@@ -26,16 +27,18 @@ class AppMonitor:
         storage = AppMonitorData()
         data = storage.load() # Load monitoring list, if any.
 
+        self.__proc_info = ProcessInfo()
+
         if data != None:
             self.__monlist = data
             if len(data) > 0: self.__begin_autorefresh()
 
         self.__notifier = Notifier()
 
-    def __update_info(self, info):
-        key = info['exe']
+    def __update_info(self, proc):
+        key = proc.get_path()
 
-        start = info['create_time']
+        start = proc.get_created()
         now = time.time()
         
         if 'last-seen' not in self.__monlist[key]: # Initial entry
@@ -90,20 +93,20 @@ class AppMonitor:
 
         if not self.__monlist_lock.locked(): return
         
-        for pid in psutil.pids():
-            try: info = psutil.Process(pid).as_dict(
-                  ['create_time', 'exe', 'pid']
-                )
+        for pid in self.__proc_info.get_process_ids():
+            p = self.__proc_info.get_info_of(pid)
 
-            except: continue
+            if p == None: continue
 
-            if info['exe'] in self.__monlist:
-                changed = self.__update_info(info)
+            path = p.get_path()
+
+            if path in self.__monlist:
+                changed = self.__update_info(p)
 
                 if changed:
-                    name = self.__monlist[info['exe']]['name']
-                    limit = self.__monlist[info['exe']]['limit']
-                    duration = self.__monlist[info['exe']]['duration']
+                    name = self.__monlist[path]['name']
+                    limit = self.__monlist[path]['limit']
+                    duration = self.__monlist[path]['duration']
 
                     if limit != None and duration > limit:
                         self.__notifier.notify(name + ' has exceeded it\'s time limit!\nPlease consider closing it.')

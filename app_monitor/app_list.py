@@ -1,33 +1,38 @@
-import psutil
 import tkinter as tk
 from tkinter import ttk
 
+from .process_info import ProcessInfo
+
 class AppListUI:
     def __refresh_list(self):
-        apps = {}
-
-        for pid in psutil.pids():
-            try: info = psutil.Process(pid).as_dict(['create_time', 'name', 'exe'])
-            except: continue
-            
-            if info['exe'] == None or len(info['exe']) == 0: continue
-                
-            apps[info['exe']] = [info['create_time'], info['name'], info['exe']]
-
-
         try:
             if len(self.__app_ids) > 0:
                 for app in self.__app_ids: self.__process_list.delete(app)
 
         except: pass
 
-        self.__app_ids = list(apps.keys())
-        list_entries = list(apps.values())
-        list_entries.sort(key=lambda elt: elt[0], reverse=True)
+        self.__app_ids = []
+        apps = {}
 
-        for entry in list_entries:
+        for pid in self.__proc_info.get_process_ids():
+            p = self.__proc_info.get_info_of(pid)
+            
+            if p == None: continue
+            
+            path = p.get_path()
+            
+            if path == None or len(path) == 0: continue
+                
+            apps[path] = p
+            self.__app_ids.append(path)
+
+        sorted_apps = list(apps.values())
+        sorted_apps.sort(key=lambda p: p.get_created(), reverse=True)
+
+        for p in sorted_apps:
             self.__process_list.insert(
-                '', 'end', iid=entry[2], text=entry[1], values=[entry[2]]
+                '', 'end', iid=p.get_path(),
+                text=p.get_label(), values=[p.get_path()]
             )
         
     def __init__(self, master=None):
@@ -86,6 +91,7 @@ class AppListUI:
         container.rowconfigure(1, weight=1)
         container.columnconfigure(0, weight=1)
 
+        self.__proc_info = ProcessInfo()
         self.__refresh_list()
 
     def __ok_click(self):
