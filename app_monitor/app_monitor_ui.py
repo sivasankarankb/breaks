@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from .app_list import AppListUI
+from .app_list import AppList, AppListUI
 from .app_edit import AppEditUI
 
 class AppMonitorUI:
@@ -104,7 +104,8 @@ class AppMonitorUI:
         self.__selection_listener(self.__remove_button_listener)
 
     def show_app_list(self):
-        self.__app_list_dlg = AppListUI(self.__container)
+        ui = AppListUI(self.__container)
+        self.__app_list_dlg = AppList(ui)
 
     def set_app_list_ok_listener(self, listener):
         if self.__app_list_dlg != None:

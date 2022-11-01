@@ -3,16 +3,19 @@ from tkinter import ttk
 
 from .process_info import ProcessInfo
 
-class AppListUI:
+class AppList:      
+    def __init__(self, ui):
+        self.__ui = ui
+        self.__apps = {}
+        ui.set_ok_listener(self.__handle_ok_click)
+        self.__ok_button_listener = None
+
+        self.__proc_info = ProcessInfo()
+        self.__refresh_list()
+
     def __refresh_list(self):
-        try:
-            if len(self.__app_ids) > 0:
-                for app in self.__app_ids: self.__process_list.delete(app)
-
-        except: pass
-
-        self.__app_ids = []
-        apps = {}
+        self.__ui.clear_list()
+        self.__apps = {}
 
         for pid in self.__proc_info.get_process_ids():
             p = self.__proc_info.get_info_of(pid)
@@ -23,19 +26,29 @@ class AppListUI:
             
             if path == None or len(path) == 0: continue
                 
-            apps[path] = p
-            self.__app_ids.append(path)
+            self.__apps[path] = p
 
-        sorted_apps = list(apps.values())
+        sorted_apps = list(self.__apps.values())
         sorted_apps.sort(key=lambda p: p.get_created(), reverse=True)
 
         for p in sorted_apps:
-            self.__process_list.insert(
-                '', 'end', iid=p.get_path(),
-                text=p.get_label(), values=[p.get_path()]
+            self.__ui.append_to_list(
+                key=p.get_path(), label=p.get_label(), path=p.get_path()
             )
-        
+    
+    def __handle_ok_click(self, path):
+        if self.__ok_button_listener != None:
+            label = self.__apps[path].get_label()
+            self.__ok_button_listener(label, path)
+
+    def set_ok_listener(self, listener=None):
+        self.__ok_button_listener = listener
+
+
+class AppListUI:
     def __init__(self, master=None):
+        self.__keys = set()
+
         self.__window = tk.Toplevel(master=master)
         self.__window.rowconfigure(0, weight=1)
         self.__window.columnconfigure(0, weight=1)
@@ -90,18 +103,31 @@ class AppListUI:
 
         container.rowconfigure(1, weight=1)
         container.columnconfigure(0, weight=1)
+    
+    def clear_list(self):
+        for key in self.__keys: self.__process_list.delete(key)
 
-        self.__proc_info = ProcessInfo()
-        self.__refresh_list()
+    def append_to_list(self, key, label, path):
+        try:
+            if key in self.__keys: return False
+        
+        except ValueError: return False
+
+        self.__keys.add(key)
+
+        self.__process_list.insert(
+            '', 'end', iid=key, text=label, values=[path]
+        )
+
+        return True
 
     def __ok_click(self):
         selection = self.__process_list.selection()
         if len(selection) != 1: return
 
         if self.__ok_button_listener != None:
-            exe = selection[0]
-            name = self.__process_list.item(exe, 'text')
-            self.__ok_button_listener(name, exe)
+            key = selection[0]
+            self.__ok_button_listener(key)
 
         self.__window.destroy()
 
