@@ -28,12 +28,11 @@ class AppMonitor:
         data = storage.load() # Load monitoring list, if any.
 
         self.__proc_info = ProcessInfo()
+        self.__notifier = Notifier()
 
         if data != None:
             self.__monlist = data
             if len(data) > 0: self.__begin_autorefresh()
-
-        self.__notifier = Notifier()
 
     def __update_info(self, proc):
         key = proc.get_path()
